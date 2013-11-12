@@ -1,2 +1,2 @@
 
-client = DeathByCaptcha.http_client( 'ats_corp', 'hello101' )
+client = DeathByCaptcha.http_client( 'atsco', 'Hello1011' )

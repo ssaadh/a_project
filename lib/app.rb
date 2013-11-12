@@ -6,7 +6,7 @@ class App
   attr_accessor :browser, :client, :generate
   
   def initialize
-    @client = DeathByCaptcha.http_client( 'ats_corp', 'hello101' )
+    @client = DeathByCaptcha.http_client( 'atsco', 'Hello1011' )
     @browser = Watir::Browser.new :ff, :profile => 'default'
     @generate = Generate.new
     @email = email

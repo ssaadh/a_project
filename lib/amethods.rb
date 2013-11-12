@@ -6,6 +6,10 @@ class Generate
   attr_reader :phrase_one, :phrase_two
   
   def initialize
+    
+    ##
+    # Gender
+    ##
     if rand( 1...3 ) == 3
       @gender = 'female'
       @gender_single = 'f'
@@ -14,37 +18,91 @@ class Generate
       @gender_single = 'm'
     end
     
-    @age = rand( 18...50 )
-    @birth_yyyy = Time.now.strftime( "%Y" ).to_i - @age
+    
+    ##
+    # Age, Birth Date
+    ##
+    minimum_age = 19
+    maximum_age = 40
+    
+    epoch_now = Time.now.to_i
+    seconds_in_a_year = 60 * 60 * 24 * 365.25
+    birth_date_minimum = epoch_now - seconds_in_a_year * minimum_age
+    birth_date_maximum = epoch_now - seconds_in_a_year * maximum_age
+    
+    random_birthday = Time.at( rand( birth_date_maximum..birth_date_minimum ) )
+    
+    # Year
+    @birth_yyyy = random_birthday.year.to_s
     @birth_yy = @birth_yyyy.to_s[ 2..-1 ]
     @birth_year = @birth_yyyy #alias/default
     
+    # Numerical Day
+    @day = random_birthday.day.to_s
+    if @day.to_i < 10
+      @day_filled = "0#{@day}"
+    else
+      @day_filled = @day
+    end
+    
+    # Month
+    @month_number = random_birthday.month.to_s
+    if @month_number.to_i < 10
+      @month_filled = "0#{@month_number}"
+    else
+      @month_filled = @month_number
+    end    
+    @month = Date::MONTHNAMES[ @month_number.to_i ]
+    @month_abbr = Date::ABBR_MONTHNAMES[ @month_number.to_i ]
+    
+    
+    ##
+    # Name
+    ##
+    
+    # First name
     if @gender == 'male'
       @first_name = 'Mark'
     else
       @first_name = 'Susan'
     end
     
+    # Last name
     @last_name = 'Daniels'
     
-    @month = 'March'
-    @month_abbr = 'Mar'
-    @month_number = '3'
-    @month_filled = '03'
     
-    @day = rand( 31 ) + 1
-    @day_filled = 11 #lol too lazy to check if single digit right now
+    ##
+    # Location
+    ##
     
+    # Zip code
     @zipcode = '08855'
     
+    
+    ##
+    # Account
+    ##
+    
+    # Username
     @username = 'overandaboutt' + rand( 99 ).to_s
     
+    # Password
     @password = 'Heyhey101!'
     
-    @about = 'Hello everyone. I\'m just your regular old person...not too good with computers, but trying to get out there and try out new things like blogging. Hope to see your around!'    
+    
+    ##
+    # Security phrase answers
+    ##
     
     @phrase_one = 'that would be correct sir'
     @phrase_two = 'no i dont know'
+    
+    
+    ##
+    # Content
+    ##
+    
+    @about = 'Hello everyone. I\'m just your regular old person...not too good with computers, but trying to get out there and try out new things like blogging. Hope to see your around!'    
   end
 end
 
