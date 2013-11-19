@@ -5,49 +5,57 @@ end
 
 class AolReg < Aol
   def what_happened
-    @browser.goto 'https://edit.yahoo.com/registration?.intl=us&.lang=en-US&new=1&.done=http%3A//mail.yahoo.com&.src=ym'
-    @browser.text.include? 'Account'
+    #@browser.goto 'https://edit.yahoo.com/registration?.intl=us&.lang=en-US&new=1&.done=http%3A//mail.yahoo.com&.src=ym'
+    #@browser.text.include? 'Account'
 
     ## registration form
-    @browser.form( :id => 'regFormBody' ).wait_until_present
-    main_form = @browser.form( :id => 'regFormBody' )
+    @browser.form.wait_until_present
 
-    ## personal info
-    main_form.text_field( :id => 'firstname' ).set( @generate.first_name )
-    main_form.text_field( :id => 'secondname' ).set( @generate.last_name )
-    main_form.text_field( :id => 'gender' ).set( @generate.gender.capitalize )
-    main_form.select_list( :id => 'mm' ).set( @generate.month )
-    main_form.select_list( :id => 'dd' ).set( @generate.day )
-    main_form.select_list( :id => 'yyy' ).set( @generate.year )
-    main_form.select_list( :id => 'postalcode' ).set( @generate.zipcode )
+    ## create email [div]
+    @browser.text_field( id: 'firstName' ).set @generate.first_name
+    @browser.text_field( id: 'lastName' ).set @generate.last_name
     
-    ## id/password
+    @browser.text_field( id: 'desiredSN' ).set( @generate.username
     
-    #choose whether domain is going to be @ymail.com or @rocketmail.com.
-    if rand( 1...3 ) == 1
-      domain = 'yahoo.com'
-    else
-      domain = 'ymail.com'
-    end    
-    main_form.select_list( :id => 'domain' ).set( domain )
-    main_form.text_field( :id => 'yahooid' ).set( @generate.username )    
+    @browser.text_field( id: 'password' ).set @generate.password
+    @browser.text_field( id: 'verifyPassword' ).set @generate.password
     
-    main_form.text_field( :id => 'password' ).set( @generate.password )
-    main_form.text_field( :id => 'passwordconfirm' ).set( @generate.password )
+    
+    ## about you [div]
+    
+    @browser.select_list( id: 'dobMonth' ).set @generate.month.capitalize
+    @browser.text_field( id: 'dd' ).set @generate.day
+    @browser.text_field( id: 'yyy' ).set @generate.birth_yyyy
+    
+    @browser.select_list( id: 'gender' ).set @generate.gender.capitalize
+    
+    @browser.text_field( id: 'zipCode' ).set @generate.zipcode
 
     ## recovery
-    main_form.select_list( :id => 'secquestion' ).set( main_form.select_list( :id => 'secquestion' ).option[ rand( 1...8 ) ] )
-    main_form.text_field( :id => 'secquestionanswer' ).set( @generate.phrase_one )
-
-    main_form.select_list( :id => 'secquestion2' ).set( main_form.select_list( :id => 'secquestion2' ).option[ rand( 1...17 ) ] )
-    main_form.text_field( :id => 'secquestionanswer2' ).set( @generate.phrase_two )
-
+    recovery_question_list = @browser.select_list( id: 'acctSecurityQuestion' )
+    recovery_question_list.set recovery_question_list.option[ rand( 1...6 ) ]
+    @browser.text_field( id: 'acctSecurityAnswer' ).set @generate.phrase_one # @TODO Random from text file
+    
+    @browser.text_field( id: 'mobileNum' ).set @generate.mobile_number # @TODO uhh
+    
+    @browser.text_field( id: 'altEMail' ).set @generate.alternate_email # @TODO uhh
+    
+    
+    ## verify [div]
+    
     ## captcha
-    main_form.image( :id => 'captchaV5ClassicCaptchaImg' ).wait_until_present
-    captcha_answer = solve_captcha_image( 'id', 'captcha*' )
-    main_form.text_field( :name => 'captchaAnswer' ).set( captcha_answer )
+    @browser.image( id: 'regImageCaptcha' ).wait_until_present
+    #captcha_answer = solve_captcha_image( 'id', 'regImageCaptcha' )
+    #@browser.text_field( :name => 'wordVerify' ).set( captcha_answer )
+    Watir::Wait.until { text_file_touched }
+    remove_touched_file
     
     ## submit
-    main_form.button( :type => 'submit' ).click
+    @browser.button( type: 'submit', value: 'Sign Up' ).click
+  end
+  
+  def confirm_alternate_email
+    @browser.text_field( id: 'password' ).set #@generate.password
+    @browser.button( type: 'submit', value: 'OK' ).click
   end
 end

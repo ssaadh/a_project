@@ -23,7 +23,7 @@ class Generate
     # Age, Birth Date
     ##
     minimum_age = 19
-    maximum_age = 40
+    maximum_age = 50
     
     epoch_now = Time.now.to_i
     seconds_in_a_year = 60 * 60 * 24 * 365.25
