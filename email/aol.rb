@@ -15,7 +15,7 @@ class AolReg < Aol
     @browser.text_field( id: 'firstName' ).set @generate.first_name
     @browser.text_field( id: 'lastName' ).set @generate.last_name
     
-    @browser.text_field( id: 'desiredSN' ).set( @generate.username
+    @browser.text_field( id: 'desiredSN' ).set @generate.username
     
     @browser.text_field( id: 'password' ).set @generate.password
     @browser.text_field( id: 'verifyPassword' ).set @generate.password
@@ -24,8 +24,8 @@ class AolReg < Aol
     ## about you [div]
     
     @browser.select_list( id: 'dobMonth' ).set @generate.month.capitalize
-    @browser.text_field( id: 'dd' ).set @generate.day
-    @browser.text_field( id: 'yyy' ).set @generate.birth_yyyy
+    @browser.text_field( id: 'dobDay' ).set @generate.day
+    @browser.text_field( id: 'dobYear' ).set @generate.birth_yyyy
     
     @browser.select_list( id: 'gender' ).set @generate.gender.capitalize
     
