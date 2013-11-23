@@ -49,6 +49,7 @@ class GmailReg < Gmail
     @browser.image( src: /google\.com\/recaptcha/ ).wait_until_present
     #captcha_answer = solve_captcha_image( 'src', 'regImageCaptcha' )
     #@browser.text_field( :name => 'recaptcha_response_field' ).set( captcha_answer )
+    @browser.text_field( name: 'recaptcha_response_field' ).hover
     Watir::Wait.until { text_file_touched }
     remove_touched_file
     

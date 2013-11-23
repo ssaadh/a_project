@@ -47,6 +47,7 @@ class AolReg < Aol
     @browser.image( id: 'regImageCaptcha' ).wait_until_present
     #captcha_answer = solve_captcha_image( 'id', 'regImageCaptcha' )
     #@browser.text_field( :name => 'wordVerify' ).set( captcha_answer )
+    @browser.text_field( name: 'wordVerify' ).hover
     Watir::Wait.until { text_file_touched }
     remove_touched_file
     

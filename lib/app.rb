@@ -2,6 +2,8 @@ require_relative 'agems'
 require_relative 'aconfig'
 require_relative 'amethods'
 
+require_relative 'a_other'
+
 class App
   attr_accessor :browser, :client, :generate
   
