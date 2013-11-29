@@ -1,3 +1,16 @@
+# from http://stackoverflow.com/questions/11007111/ruby-whats-an-elegant-way-to-pick-a-random-line-from-a-text-file/11007320#11007320
+def pick_random_line( the_file )
+  chosen_line = nil
+  File.foreach( the_file ).each_with_index do | line, number |
+    chosen_line = line if rand < 1.0/(number+1)
+  end
+  return chosen_line
+end
+
+def pick_random_line_in_memory( the_file )
+  File.readlines( the_file ).sample
+end
+
 #if you don't use @last right now, then that means the generate class can/will get funky if used more than once as an instance. fine for now.
 class Generate
   attr_reader :gender, :first_name, :last_name, :age
@@ -10,7 +23,7 @@ class Generate
     ##
     # Gender
     ##
-    if rand( 1...3 ) == 3
+    if rand( 1..3 ) == 3
       @gender = 'female'
       @gender_single = 'f'
     else
@@ -31,6 +44,8 @@ class Generate
     birth_date_maximum = epoch_now - seconds_in_a_year * maximum_age
     
     random_birthday = Time.at( rand( birth_date_maximum..birth_date_minimum ) )
+    
+    @date_of_birth = random_birthday
     
     # Year
     @birth_yyyy = random_birthday.year.to_s
@@ -62,21 +77,21 @@ class Generate
     
     # First name
     if @gender == 'male'
-      @first_name = 'Mark'
+      @first_name = Forgery( :name ).male_first_name
     else
-      @first_name = 'Susan'
+      @first_name = Forgery( :name ).female_first_name
     end
     
     # Last name
-    @last_name = 'Daniels'
+    @last_name = Forgery( :name ).last_name
     
     
     ##
     # Location
     ##
     
-    # Zip code
-    @zipcode = '08855'
+    # Zip code    
+    @zipcode = pick_random_line_in_memory( '../data/nj_zip_codes.txt' )
     
     
     ##
@@ -87,7 +102,7 @@ class Generate
     @username = 'overandaboutt' + rand( 99 ).to_s
     
     # Password
-    @password = 'Heyhey101!'
+    @password = Forgery( :basic ).password :at_least => 8
     
     
     ##
