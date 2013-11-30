@@ -1,14 +1,30 @@
-# from http://stackoverflow.com/questions/11007111/ruby-whats-an-elegant-way-to-pick-a-random-line-from-a-text-file/11007320#11007320
-def pick_random_line( the_file )
-  chosen_line = nil
-  File.foreach( the_file ).each_with_index do | line, number |
-    chosen_line = line if rand < 1.0/(number+1)
+class date_of_birth_specifics
+  attr_reader :birth_yyyy, :birth_yy, :birth_year, :month, :mont_abbr, :month_number, :month_filled, :day, :day_filled
+  
+  def initialize( random_birthday )
+    # Year
+    @birth_yyyy = random_birthday.year.to_s
+    @birth_yy = @birth_yyyy.to_s[ 2..-1 ]
+    @birth_year = @birth_yyyy #alias/default
+  
+    # Numerical Day
+    @day = random_birthday.day.to_s
+    if @day.to_i < 10
+      @day_filled = "0#{@day}"
+    else
+      @day_filled = @day
+    end
+  
+    # Month
+    @month_number = random_birthday.month.to_s
+    if @month_number.to_i < 10
+      @month_filled = "0#{@month_number}"
+    else
+      @month_filled = @month_number
+    end    
+    @month = Date::MONTHNAMES[ @month_number.to_i ]
+    @month_abbr = Date::ABBR_MONTHNAMES[ @month_number.to_i ]
   end
-  return chosen_line
-end
-
-def pick_random_line_in_memory( the_file )
-  File.readlines( the_file ).sample
 end
 
 #if you don't use @last right now, then that means the generate class can/will get funky if used more than once as an instance. fine for now.
