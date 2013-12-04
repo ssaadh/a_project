@@ -10,3 +10,5 @@ gem 'mechanize'
 gem 'nokogiri'
 
 gem 'deathbycaptcha'
+
+gem 'forgery'

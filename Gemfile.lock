@@ -10,6 +10,7 @@ GEM
     domain_name (0.5.14)
       unf (>= 0.0.5, < 1.0.0)
     ffi (1.9.3)
+    forgery (0.5.0)
     headless (1.0.1)
     json (1.8.1)
     logger (1.2.8)
@@ -58,6 +59,7 @@ PLATFORMS
 
 DEPENDENCIES
   deathbycaptcha
+  forgery
   headless
   logger
   mechanize

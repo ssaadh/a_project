@@ -1,4 +1,4 @@
-require_relative 'agems'
+#require_relative 'agems'
 require_relative 'aconfig'
 require_relative 'amethods'
 
@@ -8,7 +8,7 @@ class App
   attr_accessor :browser, :client, :generate
   
   def initialize
-    @client = DeathByCaptcha.http_client( 'atsco', 'Hello1011' )
+    #@client = DeathByCaptcha.http_client( 'atsco', 'Hello1011' )
     @browser = Watir::Browser.new :ff, :profile => 'default'
     @generate = Generate.new
     @email = email

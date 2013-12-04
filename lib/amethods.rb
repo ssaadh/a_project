@@ -1,4 +1,4 @@
-class date_of_birth_specifics
+class DateOfBirthSpecifics
   attr_reader :birth_yyyy, :birth_yy, :birth_year, :month, :mont_abbr, :month_number, :month_filled, :day, :day_filled
   
   def initialize( random_birthday )
@@ -28,8 +28,12 @@ class date_of_birth_specifics
 end
 
 #if you don't use @last right now, then that means the generate class can/will get funky if used more than once as an instance. fine for now.
+
+require 'Forgery'
+
 class Generate
   attr_reader :gender, :first_name, :last_name, :age
+  attr_reader :date_of_birth
   attr_reader :birth_yyyy, :birth_yy, :birth_year, :month, :mont_abbr, :month_number, :month_filled, :day, :day_filled
   attr_reader :zip_code, :username, :password, :about
   attr_reader :phrase_one, :phrase_two
@@ -39,7 +43,7 @@ class Generate
     ##
     # Gender
     ##
-    if rand( 1..3 ) == 3
+    if rand( 1..2 ) == 2
       @gender = 'female'
       @gender_single = 'f'
     else
@@ -107,7 +111,7 @@ class Generate
     ##
     
     # Zip code    
-    @zipcode = pick_random_line_in_memory( '../data/nj_zip_codes.txt' )
+    @zip_code = pick_random_line_in_memory( Rails.root + 'lib/a_project_app/data/nj_zip_codes.txt' )
     
     
     ##

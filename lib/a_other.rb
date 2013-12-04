@@ -1,3 +1,5 @@
+require_relative 'rails-blank'
+
 def text_file_touched
   File.exists? '../hi.ats'
 end
@@ -20,3 +22,43 @@ end
 def pick_random_line_in_memory( the_file )
   File.readlines( the_file ).sample
 end
+
+##
+
+def one_of_four_urls( url )
+  urls = Array.new
+  
+  urls << "http://#{url}"
+  urls << "#{url}"
+  urls << "http://www.#{url}"
+  urls << "www.#{url}"
+  
+  return urls.sample
+end
+
+def one_of_urls( url )
+  urls = Array.new
+  
+  urls << "http://#{url}"
+  urls << "#{url}"
+  urls << "http://www.#{url}"
+  urls << "www.#{url}"
+  
+  # same as above
+  urls << "http://#{url}"
+  urls << "#{url}"
+  urls << "http://www.#{url}"
+  urls << "www.#{url}"
+  
+  # with trailing slashes
+  urls << "#{url}/"
+  urls << "http://#{url}/"
+  urls << "http://www.#{url}/"  
+  urls << "www.#{url}/"
+  
+  return urls.sample
+end
+
+
+#def random_shifting( number )
+#end

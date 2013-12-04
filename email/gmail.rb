@@ -3,6 +3,28 @@ require_relative '../lib/app'
 class Gmail < Email
 end
 
+class GmailGeneration < Aol
+  def new_row
+    @new_email = Email.new
+    @new_email.domain = 'gmail'
+        
+    @generate = Generate.new #this is already done in that App superclass initialize method but i haven't been through this old code and structure in so long so just doing it again here for current simplicity.
+    
+    # Default, common
+    @new_email.gender = @generate.gender
+    
+    @new_email.first_name = @generate.first_name
+    @new_email.last_name = @generate.last_name
+    
+    @new_email.password = @generate.password
+    
+    @new_email.date_of_birth = @generate.date_of_birth
+    
+    @new_email.save
+  end
+end
+
+
 class GmailReg < Gmail
   def what_happened
     #@browser.goto 'https://edit.yahoo.com/registration?.intl=us&.lang=en-US&new=1&.done=http%3A//mail.yahoo.com&.src=ym'

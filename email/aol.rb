@@ -21,7 +21,7 @@ class AolGeneration < Aol
     @new_email.date_of_birth = @generate.date_of_birth
     
     # More specific
-    @new_email.zip_code = @generate.zipcode
+    @new_email.zip_code = @generate.zip_code
     
     # Completely specific
     security_questions_list = [ 
@@ -42,13 +42,52 @@ class AolGeneration < Aol
 end
 
 class AolReg < Aol
+  def go_to
+    probability = rand( 1..5 )
+    case probability
+      when 1..5 then @search_page.random_query
+      when 9..10 then @browser.goto @url.random_query
+      
+      when 1..2 then
+        ## 1.
+        # aol.com -> "sign up" link    
+        @browser.goto one_of_urls( 'aol.com' )
+        @browser.link( text: 'Sign Up' ).click
+        #@browser.link( text: 'Sign Up', href: /new.aol.com/ ).click
+    
+      when 3 then
+        ## 2.
+        # direct url
+        @browser.goto one_of_urls( 'new.aol.com' )
+    
+      when 4..5 then
+        ## 3.
+        # in-direct urls
+        urls = Array.new
+        # webmail.aol.com (goes to my.screenname.aol.com), myaccount.aol.com (goes to my.screenname.aol.com), my.screenname.aol.com
+        urls << 'webmail.aol.com'
+        urls << 'myaccount.aol.com'
+        urls << 'my.screenname.aol.com'
+        @browser.goto urls.sample
+        @browser.link( text: 'Get a Free Username' ).click
+        #@browser.link( id: 'getSn' ).click
+    end
+    
+    ## 2.
+    # aol.com -> "read mail" link -> "Sign up for a FREE account" button
+    #@browser.goto one_of_urls( 'aol.com' )
+    
+    ## 3.
+    # http://get.aol.com/mybenefits/?ncid=txtlnkusaolp00000112 ?
+  end
+  
   def what_happened( id )
     @current_email = Email.find id
     if @current_email.domain != 'aol'
       return 'Wrong email provider'
     end
     
-    #@browser.goto 'https://edit.yahoo.com/registration?.intl=us&.lang=en-US&new=1&.done=http%3A//mail.yahoo.com&.src=ym'
+    go_to
     #@browser.text.include? 'Account'
     
     ## registration form
@@ -58,7 +97,20 @@ class AolReg < Aol
     @browser.text_field( id: 'firstName' ).set @current_email.first_name
     @browser.text_field( id: 'lastName' ).set @current_email.last_name
     
-    @browser.text_field( id: 'desiredSN' ).set @current_email.username
+    if !@current_email.username.blank?
+      @browser.text_field( id: 'desiredSN' ).set @current_email.username
+    else
+      # username suggestions
+      # for broader, just try /username/ or similar
+    
+      if rand( 1..4 ) === (1..3)
+        random_number = rand( 0..2 )
+      else
+        random_number = rand( 3..4 )
+      end
+    
+      @browser.element( id: 'username-suggestions' ).li( index: random_number ).click
+    end
     
     @browser.text_field( id: 'password' ).set @current_email.password
     @browser.text_field( id: 'verifyPassword' ).set @current_email.password
@@ -66,7 +118,7 @@ class AolReg < Aol
     
     ## about you [div]
     
-    date_of_birth_specifics = date_of_birth_specifics( @current_email.date_of_birth )
+    date_of_birth_specifics = DateOfBirthSpecifics( @current_email.date_of_birth )
     @browser.select_list( id: 'dobMonth' ).set date_of_birth_specifics.month.capitalize
     @browser.text_field( id: 'dobDay' ).set date_of_birth_specifics.day
     @browser.text_field( id: 'dobYear' ).set date_of_birth_specifics.birth_yyyy
