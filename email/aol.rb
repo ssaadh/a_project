@@ -45,9 +45,6 @@ class AolReg < Aol
   def go_to
     probability = rand( 1..5 )
     case probability
-      when 1..5 then @search_page.random_query
-      when 9..10 then @browser.goto @url.random_query
-      
       when 1..2 then
         ## 1.
         # aol.com -> "sign up" link    
@@ -71,7 +68,7 @@ class AolReg < Aol
         @browser.goto urls.sample
         @browser.link( text: 'Get a Free Username' ).click
         #@browser.link( id: 'getSn' ).click
-    end
+    end #case
     
     ## 2.
     # aol.com -> "read mail" link -> "Sign up for a FREE account" button
@@ -103,7 +100,7 @@ class AolReg < Aol
       # username suggestions
       # for broader, just try /username/ or similar
     
-      if rand( 1..4 ) === (1..3)
+      if (1..3) === rand( 1..4 )
         random_number = rand( 0..2 )
       else
         random_number = rand( 3..4 )
