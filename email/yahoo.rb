@@ -25,6 +25,52 @@ class YahooThrough < Yahoo
 end
 
 class YahooThroughReg < Yahoo
+  
+  def go_to
+    probability = rand( 1..8 )
+    case probability
+      when 1..5 then
+        # 1, 2
+        @browser.goto one_of_urls( 'yahoo.com' )
+        sign_in_or_mail_link
+        google_sign_in_page
+    
+      when 8 then
+        # 3, 4
+        @browser.goto one_of_urls( 'my.yahoo.com', www: false )
+        sign_in_or_mail_link
+        google_sign_in_page
+    
+      when 6..7 then
+        # 5, 6
+        if half_and_half
+          @browser.goto one_of_urls( 'mail.yahoo.com', www: false )
+        else
+          @browser.goto one_of_urls( 'login.yahoo.com', www: false )
+        end
+    
+        google_sign_in_page
+    end #case    
+  end
+  
+    private
+  
+    def sign_in_or_mail_link
+      if half_and_half
+        @browser.element( text: 'Sign In' ).click
+      else
+        @browser.element( href: /mail.yahoo.com/ ).click
+      end
+    end
+  
+    def google_sign_in_page
+      google_sign_in_link = @browser.link( id: 'ggLink' ).href
+      @browser.goto google_sign_in_link
+    end
+  
+  
+  public
+  
   # Step 5
   def please_verify_your_account
     # clicking link opens new window

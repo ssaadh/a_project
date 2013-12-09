@@ -25,40 +25,48 @@ end
 
 ##
 
-def one_of_four_urls( url )
+def one_of_urls( url, www: true, slash: true )
+  # repeat the non slash ones twice for greater probability of getting them
+  
   urls = Array.new
   
   urls << "http://#{url}"
-  urls << "#{url}"
-  urls << "http://www.#{url}"
-  urls << "www.#{url}"
-  
-  return urls.sample
-end
-
-def one_of_urls( url )
-  urls = Array.new
-  
-  urls << "http://#{url}"
-  urls << "#{url}"
-  urls << "http://www.#{url}"
-  urls << "www.#{url}"
-  
+  urls << "#{url}"  
   # same as above
   urls << "http://#{url}"
   urls << "#{url}"
-  urls << "http://www.#{url}"
-  urls << "www.#{url}"
   
-  # with trailing slashes
-  urls << "#{url}/"
-  urls << "http://#{url}/"
-  urls << "http://www.#{url}/"  
-  urls << "www.#{url}/"
+  if www == true
+    urls << "http://www.#{url}"
+    urls << "www.#{url}"
+    # same as above
+    urls << "http://www.#{url}"
+    urls << "www.#{url}"
+  end
+  
+  if slash == true
+    # with trailing slashes
+    urls << "#{url}/"
+    urls << "http://#{url}/"
+    urls << "http://www.#{url}/"
+    urls << "www.#{url}/"
+  end
   
   return urls.sample
 end
 
+
+def half_or_half
+  if 1 == rand( 1..2 )
+    return true
+  else
+    return false
+  end
+end
+
+def half_and_half
+  half_or_half
+end
 
 #def random_shifting( number )
 #end
