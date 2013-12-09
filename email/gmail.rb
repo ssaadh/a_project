@@ -3,7 +3,7 @@ require_relative '../lib/app'
 class Gmail < Email
 end
 
-class GmailGeneration < Aol
+class GmailGeneration < Gmail
   def new_row
     @new_email = Email.new
     @new_email.domain = 'gmail'
