@@ -25,6 +25,19 @@ class YahooThrough < Yahoo
 end
 
 class YahooThroughReg < Yahoo
+  def new_email
+    go_to
+    
+    step_2
+    step_3
+    step_4
+    step_5
+    step_6
+    step_7
+    step_8
+    step_9
+  end
+  
   
   def go_to
     probability = rand( 1..8 )
@@ -33,13 +46,11 @@ class YahooThroughReg < Yahoo
         # 1, 2
         @browser.goto one_of_urls( 'yahoo.com' )
         sign_in_or_mail_link
-        google_sign_in_page
     
       when 8 then
         # 3, 4
         @browser.goto one_of_urls( 'my.yahoo.com', www: false )
         sign_in_or_mail_link
-        google_sign_in_page
     
       when 6..7 then
         # 5, 6
@@ -47,9 +58,7 @@ class YahooThroughReg < Yahoo
           @browser.goto one_of_urls( 'mail.yahoo.com', www: false )
         else
           @browser.goto one_of_urls( 'login.yahoo.com', www: false )
-        end
-    
-        google_sign_in_page
+        end        
     end #case    
   end
   
@@ -70,6 +79,23 @@ class YahooThroughReg < Yahoo
   
   
   public
+  
+  # Step 2
+  def step_2
+    google_sign_in_page
+  end  
+  
+  # Step 3
+  def step_3
+    @browser.text_field( id: 'Email' ).set
+    @browser.text_field( id: 'Passwd' ).set
+    @browser.form( id: /login/ ).button.click
+  end
+  
+  # Step 4
+  def step_4
+    @browser.element( href: /mail.yahoo.com/ ).click
+  end
   
   # Step 5
   def please_verify_your_account

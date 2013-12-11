@@ -26,9 +26,54 @@ end
 
 
 class GmailReg < Gmail
-  def what_happened
-    #@browser.goto 'https://edit.yahoo.com/registration?.intl=us&.lang=en-US&new=1&.done=http%3A//mail.yahoo.com&.src=ym'
-    #@browser.text.include? 'Account'
+  def go_to    
+    probability = rand( 1..7 )
+    case probability
+      when 1..2 then
+        # 2
+        @browser.goto one_of_urls( 'google.com' )
+        @browser.link( text: 'Gmail' ).click
+        create_an_account_button
+    
+      when 3..4 then
+        # 3
+        @browser.goto one_of_urls( 'google.com' )
+        @browser.link( text: 'Sign In' ).click
+        create_an_account_link
+    
+      when 5..6 then
+        # 1
+        @browser.goto one_of_urls( 'gmail.com' )
+        create_an_account_button
+    
+      when 7 then
+        # 4, 5
+        if half_and_half
+          @browser.goto one_of_urls( 'mail.google.com', www: false )
+          create_an_account_button
+        else
+          @browser.goto one_of_urls( 'accounts.google.com', www: false )
+          create_an_account_link
+        end
+    end #case
+  end
+  
+    private
+    
+    def create_an_account_link
+      @browser.link( text: 'Create an account' ).click
+      #@browser.link( text: '/Create an account/' ).click
+    end
+    
+    def create_an_account_button
+      @browser.link( text: 'Create an account' ).click
+    end
+  
+  
+  public
+  
+  def new_email
+    go_to
 
     ## registration form
     @browser.form.wait_until_present
@@ -79,6 +124,10 @@ class GmailReg < Gmail
     
     ## submit
     @browser.button( type: 'submit' ).click
+    
+    #If conditions show that the page post submission is shown
+    @current_email.creation_date = Time.now
+    @current_email.created = true
   end
   
   def confirm_alternate_email
