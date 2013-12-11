@@ -110,8 +110,8 @@ class Generate
     # Location
     ##
     
-    # Zip code    
-    @zip_code = pick_random_line_in_memory( Rails.root + 'lib/a_project_app/data/nj_zip_codes.txt' )
+    # Zip code
+    @zip_code = pick_random_line_in_memory( "#{ File.dirname( __FILE__ ) }/../data/nj_zip_codes.txt" )
     
     
     ##

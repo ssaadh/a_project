@@ -1,4 +1,8 @@
-#require_relative 'agems'
+# agems file requires a bunch of different stuff, but chances are if Watir hasn't been required yet then the rest haven't either.
+# But when having these files being used under a Rails app like I've been quickly doing, then the requiring of these gems isn't needed as Rails will do it first.
+if !defined? Watir
+  require_relative 'agems'
+end
 require_relative 'aconfig'
 require_relative 'amethods'
 
@@ -9,9 +13,9 @@ class App
   
   def initialize
     #@client = DeathByCaptcha.http_client( 'atsco', 'Hello1011' )
-    @browser = Watir::Browser.new :ff, :profile => 'default'
+    @browser = Watir::Browser.new :chrome#, :profile => 'default'
     @generate = Generate.new
-    @email = email
+    #@email = email
     @imacros = Imacros.new( @browser )
   end
   

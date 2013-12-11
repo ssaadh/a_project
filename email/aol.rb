@@ -1,6 +1,10 @@
 require_relative '../lib/app'
+require_relative 'email'
 
 class Aol < Email
+  def provider
+    @provider = 'aol'
+  end
 end
 
 class AolGeneration < Aol
@@ -78,11 +82,9 @@ class AolReg < Aol
     # http://get.aol.com/mybenefits/?ncid=txtlnkusaolp00000112 ?
   end
   
-  def what_happened( id )
+  def new_email( id )
     @current_email = Email.find id
-    if @current_email.domain != 'aol'
-      return 'Wrong email provider'
-    end
+    return 'Wrong email provider' if !check_domain
     
     go_to
     #@browser.text.include? 'Account'
@@ -167,9 +169,7 @@ class AolReg < Aol
     ## submit
     @browser.button( type: 'submit', value: 'Sign Up' ).click
     
-    #If conditions show that the page post submission is shown
-    @current_email.creation_date = Time.now
-    @current_email.created = true
+    finish_up_new_email
   end
   
   def confirm_alternate_email

@@ -1,6 +1,10 @@
 require_relative '../lib/app'
+require_relative 'email'
 
 class Yahoo < Email
+  def provider
+    @provider = 'yahoo'
+  end
 end
 
 class YahooThrough < Yahoo
@@ -25,7 +29,10 @@ class YahooThrough < Yahoo
 end
 
 class YahooThroughReg < Yahoo
-  def new_email
+  def new_email( id )
+    @current_email = Email.find id
+    return 'Wrong email provider' if !check_domain
+    
     go_to
     
     step_2
@@ -36,9 +43,10 @@ class YahooThroughReg < Yahoo
     step_7
     step_8
     step_9
+    
+    finish_up_new_email
   end
-  
-  
+    
   def go_to
     probability = rand( 1..8 )
     case probability

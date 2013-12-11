@@ -1,6 +1,10 @@
 require_relative '../lib/app'
+require_relative 'email'
 
 class Gmail < Email
+  def provider
+    @provider = 'gmail'
+  end
 end
 
 class GmailGeneration < Gmail
@@ -72,42 +76,48 @@ class GmailReg < Gmail
   
   public
   
-  def new_email
+  def new_email( id )
+    @current_email = Email.find id
+    return 'Wrong email provider' if !check_domain
+    
     go_to
 
     ## registration form
     @browser.form.wait_until_present
-
+    
     ## create email [div]
-    @browser.text_field( id: 'FirstName' ).set @generate.first_name
-    @browser.text_field( id: 'LastName' ).set @generate.last_name
+    @browser.text_field( id: 'FirstName' ).set @current_email.first_name
+    @browser.text_field( id: 'LastName' ).set @current_email.last_name
     
-    @browser.text_field( id: 'GmailAddress' ).set @generate.username
+    @browser.text_field( id: 'GmailAddress' ).set @current_email.username
     
-    @browser.text_field( id: 'Passwd' ).set @generate.password
-    @browser.text_field( id: 'PasswdAgain' ).set @generate.password
+    @browser.text_field( id: 'Passwd' ).set @current_email.password
+    @browser.text_field( id: 'PasswdAgain' ).set @current_email.password
     
     
     ## about you [div]
     
+    date_of_birth_specifics = DateOfBirthSpecifics( @current_email.date_of_birth )
+    
     birth_month_element = @browser.element( id: 'BirthMonth' )
     birth_month_element.click
-    birth_month_element.div( text: @generate.month.capitalize ).click
-    @browser.text_field( id: 'BirthDay' ).set @generate.day
-    @browser.text_field( id: 'BirthYear' ).set @generate.birth_yyyy
+    birth_month_element.div( text: date_of_birth_specifics.month.capitalize ).click
+    @browser.text_field( id: 'BirthDay' ).set date_of_birth_specifics.day
+    @browser.text_field( id: 'BirthYear' ).set date_of_birth_specifics.birth_yyyy
     
     gender_element = @browser.element( id: 'Gender' )
     gender_element.click
-    gender_element.div( text: @generate.gender.capitalize ).click
+    gender_element.div( text: @current_email.gender.capitalize ).click
     
-    @browser.text_field( id: 'RecoveryPhoneNumber' ).set @generate.mobile_number # @TODO uhh
+    #@browser.text_field( id: 'RecoveryPhoneNumber' ).set @generate.mobile_number # @TODO uhh
     
-    @browser.text_field( id: 'RecoveryEmailAddress' ).set @generate.alternate_email # @TODO uhh
+    @browser.text_field( id: 'RecoveryEmailAddress' ).set @current_email.alternate_email # @TODO uhh
 
+    # No option for security question anymore
     ## recovery
-    recovery_question_list = @browser.select_list( id: 'acctSecurityQuestion' )
-    recovery_question_list.set recovery_question_list.option[ rand( 1...6 ) ]
-    @browser.text_field( id: 'acctSecurityAnswer' ).set @generate.phrase_one # @TODO Random from text file
+    #recovery_question_list = @browser.select_list( id: 'acctSecurityQuestion' )
+    #recovery_question_list.set recovery_question_list.option[ rand( 1...6 ) ]
+    #@browser.text_field( id: 'acctSecurityAnswer' ).set @generate.phrase_one # @TODO Random from text file
     
     
     ## verify [div]
@@ -124,10 +134,6 @@ class GmailReg < Gmail
     
     ## submit
     @browser.button( type: 'submit' ).click
-    
-    #If conditions show that the page post submission is shown
-    @current_email.creation_date = Time.now
-    @current_email.created = true
   end
   
   def confirm_alternate_email

@@ -1,5 +1,4 @@
-
-require 'rubygems'
+#require 'rubygems'
 
 require 'logger'
 
@@ -7,10 +6,10 @@ require 'watir-webdriver'
 require 'mechanize'
 require 'nokogiri'
 
-require 'headless'
+#require 'headless'
 
-require 'deathbycaptcha'
+#require 'deathbycaptcha'
 
 ##
 
-require 'base64'
+#require 'base64'
