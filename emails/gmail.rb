@@ -1,7 +1,7 @@
 require_relative '../lib/app'
-require_relative 'email'
+require_relative 'emails'
 
-class Gmail < Email
+class Gmail < Emails
   def provider
     @provider = 'gmail'
   end

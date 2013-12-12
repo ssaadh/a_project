@@ -1,6 +1,6 @@
 require_relative '../lib/app'
 
-class Email < App
+class Emails < App
   attr_reader :provider
   
   def finish_up_new_email

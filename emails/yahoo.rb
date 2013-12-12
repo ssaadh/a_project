@@ -1,7 +1,7 @@
 require_relative '../lib/app'
-require_relative 'email'
+require_relative 'emails'
 
-class Yahoo < Email
+class Yahoo < Emails
   def provider
     @provider = 'yahoo'
   end

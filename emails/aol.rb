@@ -1,7 +1,7 @@
 require_relative '../lib/app'
-require_relative 'email'
+require_relative 'emails'
 
-class Aol < Email
+class Aol < Emails
   def provider
     @provider = 'aol'
   end
