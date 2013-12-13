@@ -49,29 +49,29 @@ class AolReg < Aol
   def go_to
     probability = rand( 1..5 )
     case probability
-      when 1..2 then
+      when 1..3 then
         ## 1.
         # aol.com -> "sign up" link    
         @browser.goto one_of_urls( 'aol.com' )
         @browser.link( text: 'Sign Up' ).click
         #@browser.link( text: 'Sign Up', href: /new.aol.com/ ).click
     
-      when 3 then
+      when 4 then
         ## 2.
         # direct url
-        @browser.goto one_of_urls( 'new.aol.com' )
+        @browser.goto one_of_urls( 'new.aol.com', www: false )
     
-      when 4..5 then
+      when 5 then
         ## 3.
         # in-direct urls
         urls = Array.new
         # webmail.aol.com (goes to my.screenname.aol.com), myaccount.aol.com (goes to my.screenname.aol.com), my.screenname.aol.com
         urls << 'webmail.aol.com'
-        urls << 'myaccount.aol.com'
-        urls << 'my.screenname.aol.com'
+        #urls << 'myaccount.aol.com'
+        #urls << 'my.screenname.aol.com'
         @browser.goto urls.sample
-        @browser.link( text: 'Get a Free Username' ).click
-        #@browser.link( id: 'getSn' ).click
+        #@browser.link( text: 'Get a Free Username' ).click
+        @browser.link( id: 'getSn' ).click
     end #case
     
     ## 2.
@@ -101,13 +101,15 @@ class AolReg < Aol
     else
       # username suggestions
       # for broader, just try /username/ or similar
-    
+      
+      # 3/4 chance to choose one of the first 3/5 usernames. 
       if (1..3) === rand( 1..4 )
         random_number = rand( 0..2 )
       else
         random_number = rand( 3..4 )
       end
-    
+      
+      @browser.text_field( id: 'desiredSN' ).click
       @browser.element( id: 'username-suggestions' ).li( index: random_number ).click
     end
     
@@ -117,8 +119,12 @@ class AolReg < Aol
     
     ## about you [div]
     
-    date_of_birth_specifics = DateOfBirthSpecifics( @current_email.date_of_birth )
-    @browser.select_list( id: 'dobMonth' ).set date_of_birth_specifics.month.capitalize
+    date_of_birth_specifics = DateOfBirthSpecifics.new @current_email.date_of_birth
+    # Honepot or just not what ya want
+    #@browser.select_list( id: 'dobMonth' ).set date_of_birth_specifics.month.capitalize
+    @browser.element( id: 'dobMonthSelectBoxItContainer' ).click
+    @browser.element( id: 'dobMonthSelectBoxItOptions' ).li( text: date_of_birth_specifics.month.capitalize )
+    
     @browser.text_field( id: 'dobDay' ).set date_of_birth_specifics.day
     @browser.text_field( id: 'dobYear' ).set date_of_birth_specifics.birth_yyyy
     

@@ -14,9 +14,9 @@ class App
   def initialize
     #@client = DeathByCaptcha.http_client( 'atsco', 'Hello1011' )
     @browser = Watir::Browser.new :chrome#, :profile => 'default'
-    @generate = Generate.new
+    #@generate = Generate.new
     #@email = email
-    @imacros = Imacros.new( @browser )
+    #@imacros = Imacros.new( @browser )
   end
   
   def recaptcha_captcha( automation = '' )
