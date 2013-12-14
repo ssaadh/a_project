@@ -12,6 +12,8 @@ class Emails < App
     #If conditions show that the page post submission is shown
     @current_email.creation_date = Time.now
     @current_email.created = true
+    
+    @current_email.save
   end
 
   def check_domain?

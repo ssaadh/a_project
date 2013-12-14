@@ -44,10 +44,13 @@ def one_of_urls( url, www: true, slash: true )
     urls << "www.#{url}"
   end
   
+  # trailing slashes
   if slash == true
-    # with trailing slashes
     urls << "#{url}/"
     urls << "http://#{url}/"
+  end
+  
+  if slash == true && www == true
     urls << "http://www.#{url}/"
     urls << "www.#{url}/"
   end

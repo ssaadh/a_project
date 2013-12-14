@@ -111,6 +111,9 @@ class AolReg < Aol
       
       @browser.text_field( id: 'desiredSN' ).click
       @browser.element( id: 'username-suggestions' ).li( index: random_number ).click
+      chosen_username = @browser.text_field( id: 'desiredSN' ).text
+      @current_email.username = chosen_username
+      @current_email.save
     end
     
     @browser.text_field( id: 'password' ).set @current_email.password
@@ -120,57 +123,42 @@ class AolReg < Aol
     ## about you [div]
     
     date_of_birth_specifics = DateOfBirthSpecifics.new @current_email.date_of_birth
-    # Honepot or just not what ya want
-    #@browser.select_list( id: 'dobMonth' ).set date_of_birth_specifics.month.capitalize
-    @browser.element( id: 'dobMonthSelectBoxItContainer' ).click
-    @browser.element( id: 'dobMonthSelectBoxItOptions' ).li( text: date_of_birth_specifics.month.capitalize )
+    
+    @browser.element( id: 'dobMonthSelectBoxIt' ).click
+    @browser.element( id: 'dobMonthSelectBoxItOptions' ).li( text: date_of_birth_specifics.month.capitalize ).when_present.click
     
     @browser.text_field( id: 'dobDay' ).set date_of_birth_specifics.day
     @browser.text_field( id: 'dobYear' ).set date_of_birth_specifics.birth_yyyy
     
-    @browser.select_list( id: 'gender' ).set @current_email.gender.capitalize
+    @browser.element( id: 'genderSelectBoxIt' ).click  
+    @browser.element( id: 'genderSelectBoxItOptions' ).li( text: @current_email.gender.capitalize ).when_present.click
     
     @browser.text_field( id: 'zipCode' ).set @current_email.zip_code
     
-    ## recovery
-    # Honeypot
-    #recovery_question_list = @browser.select_list( id: 'acctSecurityQuestion' )
-    #recovery_question_list.set recovery_question_list.option[ rand( 1...6 ) ]
-    
-    security_questions_list = [ 
-      'What was the name of your first school?', 
-      'What was the first concert you saw?', 
-      'In which city did your parents meet?', 
-      'What was your favorite childhood book?', 
-      'What was your childhood nickname?', 
-      'What was the name of your first pet?' 
-    ]
-    
-    security_question = security_questions_list.sample
-    
     #def security_question_box
     @browser.element( id: 'acctSecurityQuestionSelectBoxItContainer' ).click
+    @browser.element( id: 'acctSecurityQuestionSelectBoxItOptions' ).link( text: @current_email.secret_question_1 ).when_present.click
+    @browser.text_field( id: 'acctSecurityAnswer' ).set @current_email.secret_answer_1
     
-    # def security_question_options
-    @browser.element( id: 'acctSecurityQuestionSelectBoxItOptions' ).link( @current_email.secret_question_1 ).click
-    
-    
-    @browser.text_field( id: 'acctSecurityAnswer' ).set @current_email.secret_answer_1 # @TODO Random from text file
-    
-    #@browser.text_field( id: 'mobileNum' ).set @generate.mobile_number # @TODO uhh
-    
-    @browser.text_field( id: 'altEMail' ).set @current_email.alternate_email # @TODO uhh
+    #@browser.text_field( id: 'mobileNum' ).set @generate.mobile_number
+    if !@current_email.alternate_email_id.blank?
+      @browser.text_field( id: 'altEMail' ).set @current_email.alternate_email.full
+    else
+      @browser.text_field( id: 'altEMail' ).set @current_email.alternate_email_string
+    end
     
     
     ## verify [div]
     
     ## captcha
-    @browser.image( id: 'regImageCaptcha' ).wait_until_present
+    #@browser.image( id: 'regImageCaptcha' ).wait_until_present
     #captcha_answer = solve_captcha_image( 'id', 'regImageCaptcha' )
     #@browser.text_field( :name => 'wordVerify' ).set( captcha_answer )
-    @browser.text_field( name: 'wordVerify' ).hover
-    Watir::Wait.until { text_file_touched }
-    remove_touched_file
+    if @browser.image( id: 'regImageCaptcha' ).present?
+      @browser.text_field( name: 'wordVerify' ).hover
+      Watir::Wait.until { text_file_touched }
+      remove_touched_file
+    end
     
     ## submit
     @browser.button( type: 'submit', value: 'Sign Up' ).click
