@@ -42,7 +42,7 @@ class GmailReg < Gmail
       when 3..4 then
         # 3
         @browser.goto one_of_urls( 'google.com' )
-        @browser.link( text: 'Sign In' ).click
+        @browser.link( text: 'Sign in' ).click
         create_an_account_link
     
       when 5..6 then
@@ -81,7 +81,7 @@ class GmailReg < Gmail
     return 'Wrong email provider' if !check_domain?
     
     go_to
-
+    
     ## registration form
     @browser.form.wait_until_present
     
@@ -97,7 +97,7 @@ class GmailReg < Gmail
     
     ## about you [div]
     
-    date_of_birth_specifics = DateOfBirthSpecifics( @current_email.date_of_birth )
+    date_of_birth_specifics = DateOfBirthSpecifics.new @current_email.date_of_birth
     
     birth_month_element = @browser.element( id: 'BirthMonth' )
     birth_month_element.click
@@ -109,15 +109,15 @@ class GmailReg < Gmail
     gender_element.click
     gender_element.div( text: @current_email.gender.capitalize ).click
     
-    #@browser.text_field( id: 'RecoveryPhoneNumber' ).set @generate.mobile_number # @TODO uhh
     
-    @browser.text_field( id: 'RecoveryEmailAddress' ).set @current_email.alternate_email # @TODO uhh
+    ## recovery    
+    #@browser.text_field( id: 'RecoveryPhoneNumber' ).set @generate.mobile_number    
+    alternate_email_field( :id, 'RecoveryEmailAddress' )
 
     # No option for security question anymore
-    ## recovery
     #recovery_question_list = @browser.select_list( id: 'acctSecurityQuestion' )
     #recovery_question_list.set recovery_question_list.option[ rand( 1...6 ) ]
-    #@browser.text_field( id: 'acctSecurityAnswer' ).set @generate.phrase_one # @TODO Random from text file
+    #@browser.text_field( id: 'acctSecurityAnswer' ).set #@generate.phrase_one
     
     
     ## verify [div]
@@ -126,14 +126,15 @@ class GmailReg < Gmail
     @browser.image( src: /google\.com\/recaptcha/ ).wait_until_present
     #captcha_answer = solve_captcha_image( 'src', 'regImageCaptcha' )
     #@browser.text_field( :name => 'recaptcha_response_field' ).set( captcha_answer )
-    @browser.text_field( name: 'recaptcha_response_field' ).hover
-    Watir::Wait.until { text_file_touched }
+    @browser.text_field( name: 'recaptcha_response_field' ).click
+    Watir::Wait.until( 60 ) { text_file_touched? }
     remove_touched_file
     
     @browser.checkbox( id: 'TermsOfService' ).set
     
     ## submit
-    @browser.button( type: 'submit' ).click
+    #@browser.button( id: 'submitbutton' ).click
+    @browser.send_keys :enter
   end
   
   def confirm_alternate_email

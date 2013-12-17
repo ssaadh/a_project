@@ -27,4 +27,12 @@ class Emails < App
   def lol
     @provider
   end
+  
+  def alternate_email_field( how, what )
+    if !@current_email.alternate_email_id.blank?
+      @browser.text_field( how, what ).set @current_email.alternate_email.full
+    else
+      @browser.text_field( how, what ).set @current_email.alternate_email_string
+    end
+  end
 end

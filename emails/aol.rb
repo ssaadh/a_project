@@ -102,7 +102,7 @@ class AolReg < Aol
       # username suggestions
       # for broader, just try /username/ or similar
       
-      # 3/4 chance to choose one of the first 3/5 usernames. 
+      # 3/4 chance to choose one of the first 3/5 usernames.
       if (1..3) === rand( 1..4 )
         random_number = rand( 0..2 )
       else
@@ -110,7 +110,7 @@ class AolReg < Aol
       end
       
       @browser.text_field( id: 'desiredSN' ).click
-      @browser.element( id: 'username-suggestions' ).li( index: random_number ).click
+      @browser.element( id: 'username-suggestions' ).li( index: random_number ).link.when_present.click
       chosen_username = @browser.text_field( id: 'desiredSN' ).text
       @current_email.username = chosen_username
       @current_email.save
@@ -137,15 +137,11 @@ class AolReg < Aol
     
     #def security_question_box
     @browser.element( id: 'acctSecurityQuestionSelectBoxItContainer' ).click
-    @browser.element( id: 'acctSecurityQuestionSelectBoxItOptions' ).link( text: @current_email.secret_question_1 ).when_present.click
+    @browser.element( id: 'acctSecurityQuestionSelectBoxItOptions' ).link( text: @current_email.secret_question_1 ).link.when_present.click
     @browser.text_field( id: 'acctSecurityAnswer' ).set @current_email.secret_answer_1
     
     #@browser.text_field( id: 'mobileNum' ).set @generate.mobile_number
-    if !@current_email.alternate_email_id.blank?
-      @browser.text_field( id: 'altEMail' ).set @current_email.alternate_email.full
-    else
-      @browser.text_field( id: 'altEMail' ).set @current_email.alternate_email_string
-    end
+    alternate_email_field( :id, 'altEMail' )
     
     
     ## verify [div]

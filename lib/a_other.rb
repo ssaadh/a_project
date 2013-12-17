@@ -1,11 +1,28 @@
 require_relative 'rails-blank'
 
-def text_file_touched
-  File.exists? '../hi.ats'
+def text_file_touch?
+  # Check for file existing every three seconds. Doing sleep stops the thread/script which is a problem?
+  now = Time.now
+  counter = 1
+  loop do
+    if Time.now < now + counter
+      return true if File.exists? '../hi.ats'
+    end
+    counter += 3
+  end
+end
+
+def text_file_touched?
+  remove_touched_file
+  loop do
+    return true if File.exists? "#{ File.dirname( __FILE__ ) }/../hi.ats"
+    sleep 3
+  end
 end
 
 def remove_touched_file
-  File.delete '../hi.ats'
+  the_file = "#{ File.dirname( __FILE__ ) }/../hi.ats"
+  File.delete the_file if File.exists? the_file
 end
 
 ##
