@@ -50,4 +50,68 @@ class HotmailReg < Hotmail
     ## submit
     main_form.button( :type => 'submit' ).click
   end
+  
+  def new_email
+    
+  end
+  
+  def first_name_field
+    @b.text_field( :id, 'iFirstName' )
+  end
+  
+  def last_name_field
+    @b.text_field( :id, 'iLastName' )
+  end
+  
+  def username_field
+    @b.text_field( :id, 'imembernamelive' )
+  end
+  
+  def username_domain_field
+    #dropdown
+  end
+  
+  def password_field
+    @b.text_field( :id, 'iPwd' )
+  end
+  
+  def password_verification_field
+    @b.text_field( :id, 'iRetypePwd' )
+  end
+  
+  def zip_code_field
+    @b.text_field( :id, 'iZipCode' )
+  end
+  
+  def birth_month_field
+    #dropdown
+  end
+  
+  def birth_day_field
+    #dropdown
+  end
+  
+  def birth_year_field
+    #dropdown
+  end
+  
+  def gender_field
+    #dropdown
+  end
+  
+  def alternate_email_field
+    @b.text_field( :id, 'iAltEmail' )
+  end
+  
+  def captcha_image
+    #image
+  end
+  
+  def captcha_answer_field
+    @b.text_field( :id, /wlspispSolutionElement/ )
+  end
+  
+  def create_account_button
+    @b.button( :value, 'Create account' )
+  end
 end

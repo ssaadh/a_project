@@ -102,14 +102,15 @@ class AolReg < Aol
       # username suggestions
       # for broader, just try /username/ or similar
       
+      @browser.text_field( id: 'desiredSN' ).click
+      
       # 3/4 chance to choose one of the first 3/5 usernames.
       if (1..3) === rand( 1..4 )
         random_number = rand( 0..2 )
       else
         random_number = rand( 3..4 )
-      end
+      end      
       
-      @browser.text_field( id: 'desiredSN' ).click
       @browser.element( id: 'username-suggestions' ).li( index: random_number ).link.when_present.click
       chosen_username = @browser.text_field( id: 'desiredSN' ).text
       @current_email.username = chosen_username
@@ -130,14 +131,14 @@ class AolReg < Aol
     @browser.text_field( id: 'dobDay' ).set date_of_birth_specifics.day
     @browser.text_field( id: 'dobYear' ).set date_of_birth_specifics.birth_yyyy
     
-    @browser.element( id: 'genderSelectBoxIt' ).click  
+    @browser.element( id: 'genderSelectBoxIt' ).click
     @browser.element( id: 'genderSelectBoxItOptions' ).li( text: @current_email.gender.capitalize ).when_present.click
     
     @browser.text_field( id: 'zipCode' ).set @current_email.zip_code
     
     #def security_question_box
     @browser.element( id: 'acctSecurityQuestionSelectBoxItContainer' ).click
-    @browser.element( id: 'acctSecurityQuestionSelectBoxItOptions' ).link( text: @current_email.secret_question_1 ).link.when_present.click
+    @browser.element( id: 'acctSecurityQuestionSelectBoxItOptions' ).link( text: @current_email.secret_question_1 ).when_present.click
     @browser.text_field( id: 'acctSecurityAnswer' ).set @current_email.secret_answer_1
     
     #@browser.text_field( id: 'mobileNum' ).set @generate.mobile_number
