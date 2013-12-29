@@ -95,8 +95,13 @@ class YahooThroughReg < Yahoo
   
   # Step 3
   def step_3
-    @browser.text_field( id: 'Email' ).set
-    @browser.text_field( id: 'Passwd' ).set
+    if half_and_half
+      set_email = @current_email.alternate_email.full
+    else
+      set_email = @current_email.alternate_email.username
+    end
+    @browser.text_field( id: 'Email' ).set set_email
+    @browser.text_field( id: 'Passwd' ).set @current_email.alternate_email.password
     @browser.form( id: /login/ ).button.click
   end
   
@@ -106,7 +111,8 @@ class YahooThroughReg < Yahoo
   end
   
   # Step 5
-  def please_verify_your_account
+  #def please_verify_your_account
+  def step_5
     # clicking link opens new window
     #link (html a element) id is specifically "gBtnLnk"
     sign_in_url = @browser.element( id: 'gBtn' ).link.href
@@ -114,33 +120,37 @@ class YahooThroughReg < Yahoo
   end
   
   def step_6
-    @browser.text_field( id: 'Passwd' ).set #current_email.alternate_email.password #
+    @browser.text_field( id: 'Passwd' ).set @current_email.alternate_email.password
   end
   
   def step_7
     # username
-    @browser.text_field( id: 'yahooid' ).set 
-    
-    # suggestion
-    if rand( 1..2 ) == 1
-      random_number = 0
+    if !@current_email.username.blank?
+      @browser.text_field( id: 'yahooid' ).set @current_email.username
     else
-      random_number = rand( 1..2 )
+      @browser.text_field( id: 'yahooid' ).click
+    
+      # suggestion
+      if rand( 1..2 ) == 1
+        random_number = 0
+      else
+        random_number = rand( 1..2 )
+      end
+      @browser.element( id: 'yahoo-domain-suggs' ).li( index: random_number ).click
     end
-    @browser.element( id: 'yahoo-domain-suggs' ).li( index: random_number ).click
     
     # check username (only needed when actually going to edit a taken username)
-    @browser.button( text: 'Check' )
+    #@browser.button( text: 'Check' )
     
     # password
-    @browser.text_field( id: 'password' ).set current_email.password
+    @browser.text_field( id: 'password' ).set @current_email.password
     
     # button
     @browser.element( id: 'agreementButton' ).button.click
   end
   
   def step_8
-    @browser.text_field( id: 'passwd' ).set current_email.password
+    @browser.text_field( id: 'passwd' ).set @current_email.password
     
     @browser.button( text: 'Sign In' ).click
   end
