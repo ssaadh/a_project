@@ -28,7 +28,7 @@ class YahooThrough < Yahoo
   end
 end
 
-class YahooThroughReg < Yahoo
+class YahooThrough1Reg < Yahoo
   def new_email( id )
     @current_email = Email.find id
     return 'Wrong email provider' if !check_domain?
@@ -36,52 +36,48 @@ class YahooThroughReg < Yahoo
     go_to
     
     step_2
+    puts '2'
     step_3
+    puts '3'
     step_4
+    puts '4'
     step_5
+    puts '5'
     step_6
+    puts '6'
     step_7
+    puts '7'
     step_8
+    puts '8'
     step_9
+    puts '9'
     
     finish_up_new_email
   end
     
   def go_to
-    probability = rand( 1..8 )
+    probability = rand( 1..4 )
     case probability
-      when 1..5 then
+      when 1..3 then
         # 1, 2
         @browser.goto one_of_urls( 'yahoo.com' )
-        sign_in_or_mail_link
     
-      when 8 then
+      when 4 then
         # 3, 4
-        @browser.goto one_of_urls( 'my.yahoo.com', www: false )
-        sign_in_or_mail_link
+        @browser.goto one_of_urls( 'my.yahoo.com', www: false )        
+    end #case
     
-      when 6..7 then
-        # 5, 6
-        if half_and_half
-          @browser.goto one_of_urls( 'mail.yahoo.com', www: false )
-        else
-          @browser.goto one_of_urls( 'login.yahoo.com', www: false )
-        end        
-    end #case    
+    sign_in_link
   end
   
     private
   
-    def sign_in_or_mail_link
-      if half_and_half
-        @browser.element( text: 'Sign In' ).click
-      else
-        @browser.element( href: /mail.yahoo.com/ ).click
-      end
+    def sign_in_link
+      @browser.element( text: 'Sign In' ).click
     end
   
     def google_sign_in_page
-      google_sign_in_link = @browser.link( id: 'ggLink' ).href
+      google_sign_in_link = @browser.link( id: 'ggLink' ).when_present.href
       @browser.goto google_sign_in_link
     end
   
@@ -89,11 +85,13 @@ class YahooThroughReg < Yahoo
   public
   
   # Step 2
+  # Go to google oAuth sign-in page
   def step_2
     google_sign_in_page
-  end  
+  end
   
   # Step 3
+  # Enter in details for alternate email aka the Gmail info and click to next page
   def step_3
     if half_and_half
       set_email = @current_email.alternate_email.full
@@ -106,8 +104,20 @@ class YahooThroughReg < Yahoo
   end
   
   # Step 4
+  # Click the 'Accept' or submit button where Yahoo asks for the oAuth permissions as "Yahoo! would like to:..."
   def step_4
-    @browser.element( href: /mail.yahoo.com/ ).click
+    #@browser.element( id: 'policy_message' ).click
+    begin
+      Watir::Wait.until { @browser.button( text: 'Accept' ).present? }
+      sleep 1
+      
+      #<button id="submit_approve_access" type="submit" tabindex="1" class="goog-buttonset-action" onclick="return lso.approveButtonAction();">Accept</button>
+      #@browser.button( id: /submit/ ).click
+    
+      #@browser.button( text: 'Accept' ).when_present.hover
+      @browser.button( text: 'Accept' ).click
+    rescue
+    end
   end
   
   # Step 5
@@ -158,6 +168,167 @@ class YahooThroughReg < Yahoo
   def step_9
     @browser.link( text: 'Keep Theme' ).click
   end
+end
+
+##
+
+# 'link 2'
+class YahooThrough2Reg < Yahoo
+  def new_email( id )
+    @current_email = Email.find id
+    return 'Wrong email provider' if !check_domain?
+    
+    go_to
+    
+    step_2
+    puts '2'
+    step_3
+    puts '3'
+    step_4
+    puts '4'
+    step_5
+    puts '5'
+    step_6
+    puts '6'
+    step_7
+    puts '7'
+    step_8
+    puts '8'
+    step_9
+    puts '9'
+    
+    finish_up_new_email
+  end
+    
+  def go_to
+    probability = rand( 1..9 )
+    case probability
+      when 1..5 then
+        # 1, 2
+        @browser.goto one_of_urls( 'yahoo.com' )
+        mail_link
+    
+      when 8..9 then
+        # 3, 4
+        @browser.goto one_of_urls( 'my.yahoo.com', www: false )
+        mail_link
+    
+      when 6..7 then
+        # 5, 6
+        if half_and_half
+          @browser.goto one_of_urls( 'mail.yahoo.com', www: false )
+        else
+          @browser.goto one_of_urls( 'login.yahoo.com', www: false )
+        end        
+    end #case    
+  end
+  
+    private
+  
+    def mail_link
+        @browser.link( href: /mail.yahoo.com/ ).click
+      end
+    end
+  
+    def google_sign_in_page
+      google_sign_in_link = @browser.link( id: 'ggLink' ).when_present.href
+      @browser.goto google_sign_in_link
+    end
+  
+  
+  public
+  
+  # Step 2
+  # Go to google oAuth sign-in page
+  def step_2
+    google_sign_in_page
+  end
+  
+  # Step 3
+  # Enter in details for alternate email aka the Gmail info and click to next page
+  def step_3
+    if half_and_half
+      set_email = @current_email.alternate_email.full
+    else
+      set_email = @current_email.alternate_email.username
+    end
+    @browser.text_field( id: 'Email' ).set set_email
+    @browser.text_field( id: 'Passwd' ).set @current_email.alternate_email.password
+    @browser.form( id: /login/ ).button.click
+  end
+  
+  # Step 4
+  # Click the 'Accept' or submit button where Yahoo asks for the oAuth permissions as "Yahoo! would like to:..."
+  def step_4
+    #@browser.element( id: 'policy_message' ).click
+    begin
+      Watir::Wait.until { @browser.button( text: 'Accept' ).present? }
+      sleep 1
+      
+      #<button id="submit_approve_access" type="submit" tabindex="1" class="goog-buttonset-action" onclick="return lso.approveButtonAction();">Accept</button>
+      #@browser.button( id: /submit/ ).click
+    
+      #@browser.button( text: 'Accept' ).when_present.hover
+      @browser.button( text: 'Accept' ).click
+    rescue
+    end
+  end
+  
+  # Sign up page.
+  def step_5
+  end
+  
+    # This is same for either link. Small chance for different html though.
+    def sign_up_fields_first_half
+      # first name
+    
+      # last name
+    
+      # birthday
+        # month is drop down
+        # day field
+        # year field
+    end
+  
+    # Same fields, but a healthy chance for different html
+    def sign_up_fields_second_half
+      # Username field
+    
+      # check button but not needed
+    
+      # password
+      # password verification
+    end
+  
+    # should be same for both links, at least for first sign up form/page
+    def continue_button
+    
+    end
+  
+  # Not sure what happens after pressing continue button here
+  def step_6
+    
+  end
+  
+  # At some point you get sent back to the home page? Maybe you also have to re-enter Yahoo password before or after?
+  
+  # Then you get to the inbox and the theme bit
+  def step_X
+    
+  end
+  
+  # maybe
+  def step_8X
+    @browser.text_field( id: 'passwd' ).set @current_email.password
+    
+    @browser.button( text: 'Sign In' ).click
+  end
+  
+  # maybe
+  def step_9X
+    @browser.link( text: 'Keep Theme' ).click
+  end
+  
 end
 
 
