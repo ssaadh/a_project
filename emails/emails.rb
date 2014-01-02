@@ -1,7 +1,7 @@
 require_relative '../lib/app'
 
 class Emails < App
-  attr_reader :provider
+  attr_reader :provider, :current_email, :new_email
   
   def initialize
     super
