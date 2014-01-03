@@ -57,16 +57,15 @@ class YahooThrough1Reg < Yahoo
     
   def go_to
     probability = rand( 1..4 )
+    puts "goto #{probability}"
     case probability
       when 1..3 then
         # 1, 2
         @browser.goto one_of_urls( 'yahoo.com' )
-    
       when 4 then
         # 3, 4
-        @browser.goto one_of_urls( 'my.yahoo.com', www: false )        
-    end #case
-    
+        @browser.goto one_of_urls( 'my.yahoo.com', www: false )
+    end #case    
     sign_in_link
   end
   
@@ -175,33 +174,52 @@ end
 # 'link 2'
 class YahooThrough2Reg < Yahoo
   def new_email( id )
-    @current_email = Email.find id
+    self.current_email = Email.find id
     return 'Wrong email provider' if !check_domain?
     
     go_to
     
-    step_2
-    puts '2'
-    step_3
-    puts '3'
-    step_4
-    puts '4'
+    @browser.goto google_sign_in_link
+    puts 'step 2'
+    
+    if half_and_half
+      google_email = @current_email.alternate_email.full
+    else
+      google_email = @current_email.alternate_email.username
+    end    
+    google_password = @current_email.alternate_email.password
+    google_oauth_sign_in( google_email, google_password )
+    puts 'step 3'
+    
+    accept_google_oauth_permissions
+    puts 'step 4'
+    
+    return
+    
     step_5
-    puts '5'
+    puts 'step 5'
+    sign_up_fields_first_half
+    sign_up_fields_second_half    
+    continue_button.click
+    
     step_6
-    puts '6'
+    puts 'step 6'
+    
     step_7
-    puts '7'
+    puts 'step 7'
+    
     step_8
-    puts '8'
+    puts 'step 8'
+    
     step_9
-    puts '9'
+    puts 'step 9'
     
     finish_up_new_email
   end
     
   def go_to
     probability = rand( 1..9 )
+    puts "goto #{probability}"
     case probability
       when 1..5 then
         # 1, 2
@@ -219,90 +237,90 @@ class YahooThrough2Reg < Yahoo
           @browser.goto one_of_urls( 'mail.yahoo.com', www: false )
         else
           @browser.goto one_of_urls( 'login.yahoo.com', www: false )
-        end        
+        end
     end #case    
   end
   
     private
   
     def mail_link
-        @browser.link( href: /mail.yahoo.com/ ).click
-      end
+      @browser.link( href: /mail.yahoo.com/ ).click
     end
-  
-    def google_sign_in_page
-      google_sign_in_link = @browser.link( id: 'ggLink' ).when_present.href
-      @browser.goto google_sign_in_link
-    end
-  
   
   public
   
   # Step 2
-  # Go to google oAuth sign-in page
-  def step_2
-    google_sign_in_page
+  def google_sign_in_link
+    @google_sign_in_link = @browser.link( id: 'ggLink' ).when_present.href
   end
   
   # Step 3
   # Enter in details for alternate email aka the Gmail info and click to next page
-  def step_3
-    if half_and_half
-      set_email = @current_email.alternate_email.full
-    else
-      set_email = @current_email.alternate_email.username
-    end
-    @browser.text_field( id: 'Email' ).set set_email
-    @browser.text_field( id: 'Passwd' ).set @current_email.alternate_email.password
+  def google_oauth_sign_in( username = nil, password = nil )
+    @browser.text_field( id: 'Email' ).set username
+    @browser.text_field( id: 'Passwd' ).set password
     @browser.form( id: /login/ ).button.click
   end
   
   # Step 4
   # Click the 'Accept' or submit button where Yahoo asks for the oAuth permissions as "Yahoo! would like to:..."
-  def step_4
-    #@browser.element( id: 'policy_message' ).click
-    begin
-      Watir::Wait.until { @browser.button( text: 'Accept' ).present? }
-      sleep 1
-      
-      #<button id="submit_approve_access" type="submit" tabindex="1" class="goog-buttonset-action" onclick="return lso.approveButtonAction();">Accept</button>
-      #@browser.button( id: /submit/ ).click
-    
-      #@browser.button( text: 'Accept' ).when_present.hover
-      @browser.button( text: 'Accept' ).click
-    rescue
+  def accept_google_oauth_permissions
+    if @browser.button( text: 'Accept' ).present?
+      attempts = 0
+      begin
+        sleep 2
+        #@browser.button( id: /submit/ ).click
+        @browser.button( text: 'Accept' ).click
+      rescue
+        attempts += 1
+        retry unless attempts > 5
+      end
     end
   end
   
+  # Step 5
   # Sign up page.
-  def step_5
-  end
   
     # This is same for either link. Small chance for different html though.
     def sign_up_fields_first_half
       # first name
-    
+      # optional, sometimes
+      if !@current_email.first_name.blank?
+        first_name_field.set @current_email.first_name
+      end
+      
       # last name
+      # optional, sometimes
+      if !@current_email.last_name.blank?
+        last_name_field.set @current_email.last_name
+      end
     
       # birthday
         # month is drop down
+        birthday_month_field.select @current_email.birthday_specifics.month.capitalize
         # day field
+        birthday_day_field.set @current_email.birthday_specifics.day
         # year field
+        birthday_year_field.set @current_email.birthday_specifics.year
     end
   
     # Same fields, but a healthy chance for different html
     def sign_up_fields_second_half
       # Username field
-    
+      username_field.set @current_email.username
       # check button but not needed
     
       # password
+      password_field.set @current_email.password
+      
       # password verification
+      password_verification_field.set @current_email.password
+      
     end
   
     # should be same for both links, at least for first sign up form/page
     def continue_button
-    
+      @browser.button( :value, 'Continue' )
     end
   
   # Not sure what happens after pressing continue button here
@@ -329,6 +347,39 @@ class YahooThrough2Reg < Yahoo
     @browser.link( text: 'Keep Theme' ).click
   end
   
+  private
+  
+    def first_name_field
+      @browser.text_field( :id, 'fn' )
+    end
+  
+    def last_name_field
+    @browser.text_field( :id, 'ln' )
+    end
+    
+    def birthday_month_field
+      @browser.select_list( :id, 'month' )
+    end
+    
+    def birthday_day_field
+      @browser.text_field( :id, 'day' )
+    end
+    
+    def birthday_year_field
+      @browser.text_field( :name, 'by' )
+    end
+    
+    def username_field
+      @browser.text_field( :id, 'yahooid' )
+    end
+    
+    def password_field
+      @browser.text_field( :id, 'password' )
+    end
+    
+    def password_verification_field
+      @browser.text_field( :id, 'passwordconfirm' )
+    end
 end
 
 

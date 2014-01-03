@@ -1,11 +1,23 @@
 require_relative '../lib/app'
 
 class Emails < App
-  attr_reader :provider, :current_email, :new_email
+  attr_reader :provider#, :current_email, :new_email
+  attr_accessor :current_email, :new_email
   
   def initialize
     super
     provider
+  end
+  
+  def set_up_email( id )
+    @current_email = Email.find id
+    date_of_birth_specifics = DateOfBirthSpecifics.new @current_email.date_of_birth
+    return @current_email
+  end
+  
+  def current_email=( id )
+    @current_email ||= Email.find id
+    @current_email.birthday_specifics = DateOfBirthSpecifics.new @current_email.date_of_birth
   end
   
   def finish_up_new_email

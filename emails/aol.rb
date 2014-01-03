@@ -83,7 +83,7 @@ class AolReg < Aol
   end
   
   def new_email( id )
-    @current_email = Email.find id
+    self.current_email = id
     return 'Wrong email provider' if !check_domain?
     
     go_to
