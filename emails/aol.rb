@@ -48,6 +48,7 @@ end
 class AolReg < Aol
   def go_to
     probability = rand( 1..5 )
+    puts "goto #{probability}"
     case probability
       when 1..3 then
         ## 1.
@@ -121,15 +122,12 @@ class AolReg < Aol
     @browser.text_field( id: 'verifyPassword' ).set @current_email.password
     
     
-    ## about you [div]
-    
-    date_of_birth_specifics = DateOfBirthSpecifics.new @current_email.date_of_birth
-    
+    ## about you [div]    
     @browser.element( id: 'dobMonthSelectBoxIt' ).click
-    @browser.element( id: 'dobMonthSelectBoxItOptions' ).li( text: date_of_birth_specifics.month.capitalize ).when_present.click
+    @browser.element( id: 'dobMonthSelectBoxItOptions' ).li( text: @current_email.birthday_specifics.month.capitalize ).when_present.click
     
-    @browser.text_field( id: 'dobDay' ).set date_of_birth_specifics.day
-    @browser.text_field( id: 'dobYear' ).set date_of_birth_specifics.birth_yyyy
+    @browser.text_field( id: 'dobDay' ).set @current_email.birthday_specifics.day
+    @browser.text_field( id: 'dobYear' ).set @current_email.birthday_specifics.birth_yyyy
     
     @browser.element( id: 'genderSelectBoxIt' ).click
     @browser.element( id: 'genderSelectBoxItOptions' ).li( text: @current_email.gender.capitalize ).when_present.click

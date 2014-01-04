@@ -154,8 +154,7 @@ class YahooThrough2Reg < Yahoo
         last_name_field.set @current_email.last_name
       end
       
-      # @TODO Use alternate email's birthday if date_of_birth column is blank
-      # birthday
+      # Birthday
         # month is drop down
         birthday_month_field.select @current_email.birthday_specifics.month.capitalize
         # day field
