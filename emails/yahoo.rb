@@ -36,11 +36,14 @@ class YahooThrough2Reg < Yahoo
     self.current_email = Email.find id
     return 'Wrong email provider' if !check_domain?
     
+    # step 1
     go_to
     
+    # step 2
     @browser.goto google_sign_in_link
     puts 'step 2'
     
+    # step 3
     if half_and_half
       google_email = @current_email.alternate_email.full
     else
@@ -50,28 +53,25 @@ class YahooThrough2Reg < Yahoo
     google_oauth_sign_in( google_email, google_password )
     puts 'step 3'
     
+    # step 4
     accept_google_oauth_permissions
     puts 'step 4'
-    
-    return
-    
-    step_5
-    puts 'step 5'
+        
+    # step 5
     sign_up_fields_first_half
-    sign_up_fields_second_half    
+    sign_up_fields_second_half
     continue_button.click
+    puts 'step 5'
     
-    step_6
+    # step 6
+    theme_selection
     puts 'step 6'
     
-    step_7
-    puts 'step 7'
+    #step_7
+    #puts 'step 7'
     
-    step_8
-    puts 'step 8'
-    
-    step_9
-    puts 'step 9'
+    #step_8
+    #puts 'step 8'
     
     finish_up_new_email
   end
@@ -153,7 +153,8 @@ class YahooThrough2Reg < Yahoo
       if !@current_email.last_name.blank?
         last_name_field.set @current_email.last_name
       end
-    
+      
+      # @TODO Use alternate email's birthday if date_of_birth column is blank
       # birthday
         # month is drop down
         birthday_month_field.select @current_email.birthday_specifics.month.capitalize
@@ -167,7 +168,6 @@ class YahooThrough2Reg < Yahoo
     def sign_up_fields_second_half
       # Username field
       username_field.set @current_email.username
-      # check button but not needed
     
       # password
       password_field.set @current_email.password
@@ -175,6 +175,8 @@ class YahooThrough2Reg < Yahoo
       # password verification
       password_verification_field.set @current_email.password
       
+      # make sure the check went through
+      #<a id="change">Change</a>
     end
   
     # should be same for both links, at least for first sign up form/page
@@ -182,28 +184,16 @@ class YahooThrough2Reg < Yahoo
       @browser.button( :value, 'Continue' )
     end
   
-  # Not sure what happens after pressing continue button here
-  def step_6
-    
-  end
-  
-  # At some point you get sent back to the home page? Maybe you also have to re-enter Yahoo password before or after?
-  
-  # Then you get to the inbox and the theme bit
-  def step_X
-    
-  end
-  
-  # maybe
-  def step_8X
-    @browser.text_field( id: 'passwd' ).set @current_email.password
-    
-    @browser.button( text: 'Sign In' ).click
-  end
-  
-  # maybe
-  def step_9X
-    @browser.link( text: 'Keep Theme' ).click
+  # step 6
+  def theme_selection
+    if half_and_half    
+      # keep theme
+      @browser.link( text: 'Keep Theme' ).click
+    else
+      # choose one of the visible 8
+      random_number = rand( 0..7 )
+      @browser.element( :id, 'onboard-dialog' ).element( :class => 'inner', :index => random_number ).click
+    end
   end
   
   private
@@ -239,6 +229,4 @@ class YahooThrough2Reg < Yahoo
     def password_verification_field
       @browser.text_field( :id, 'passwordconfirm' )
     end
-end
-
 end
