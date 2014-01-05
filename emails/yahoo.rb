@@ -180,7 +180,7 @@ class YahooThrough2Reg < Yahoo
   
     # should be same for both links, at least for first sign up form/page
     def continue_button
-      @browser.button( :value, 'Continue' )
+      @browser.button( value: 'Continue' )
     end
   
   # step 6
@@ -191,41 +191,41 @@ class YahooThrough2Reg < Yahoo
     else
       # choose one of the visible 8
       random_number = rand( 0..7 )
-      @browser.element( :id, 'onboard-dialog' ).element( :class => 'inner', :index => random_number ).click
+      @browser.element( :id, 'onboard-dialog' ).element( class: 'inner', index: random_number ).click
     end
   end
   
   private
   
     def first_name_field
-      @browser.text_field( :id, 'fn' )
+      @browser.text_field( id: 'fn' )
     end
   
     def last_name_field
-    @browser.text_field( :id, 'ln' )
+    @browser.text_field( id: 'ln' )
     end
     
     def birthday_month_field
-      @browser.select_list( :id, 'month' )
+      @browser.select_list( id: 'month' )
     end
     
     def birthday_day_field
-      @browser.text_field( :id, 'day' )
+      @browser.text_field( id: 'day' )
     end
     
     def birthday_year_field
-      @browser.text_field( :name, 'by' )
+      @browser.text_field( name: 'by' )
     end
     
     def username_field
-      @browser.text_field( :id, 'yahooid' )
+      @browser.text_field( id: 'yahooid' )
     end
     
     def password_field
-      @browser.text_field( :id, 'password' )
+      @browser.text_field( id: 'password' )
     end
     
     def password_verification_field
-      @browser.text_field( :id, 'passwordconfirm' )
+      @browser.text_field( id: 'passwordconfirm' )
     end
 end
