@@ -9,15 +9,35 @@ require_relative 'amethods'
 require_relative 'a_other'
 
 class App
-  attr_accessor :browser, :client, :generate
+  attr_accessor :browser, :captcha_client, :generate
   
-  def initialize
-    #@client = DeathByCaptcha.http_client( 'atsco', 'Hello1011' )
-    @browser = Watir::Browser.new :chrome#, :profile => 'default'
-    #@generate = Generate.new
+  def initialize( to_browser = true, to_generate = true, to_client = false )
+    self.browser = true if to_browser == true
+    self.generate = true if to_generate == true
+    
+    #self.captcha_client if to_client == true
     #@email = email
-    #@imacros = Imacros.new( @browser )
+    #self.imacros if to_imacros == true
   end
+  
+    # setters
+    def browser=( k )
+      @browser ||= Watir::Browser.new :chrome#, :profile => 'default'
+    end
+  
+    def generate=( k )
+      @generate ||= Generate.new
+    end
+  
+    def captcha_client=( username = 'atsco', password = 'Hello1011' )
+      @captcha_client ||= DeathByCaptcha.http_client( username, password )
+    end
+  
+    def imacros=( k )
+      @imacros ||= Imacros.new( @browser )
+    end
+  
+  ##
   
   def recaptcha_captcha( automation = '' )
     if automation == ''

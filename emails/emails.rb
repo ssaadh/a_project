@@ -4,8 +4,8 @@ class Emails < App
   attr_reader :provider#, :current_email, :new_email
   attr_accessor :current_email, :new_email
   
-  def initialize
-    super
+  def initialize( to_browser = true, to_generate = true, to_client = false )
+    super( to_browser, to_generate, to_client )
     provider
   end
   
