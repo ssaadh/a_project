@@ -3,9 +3,9 @@ class DateOfBirthSpecifics
   
   def initialize( random_birthday )
     # Year
-    @birth_yyyy = random_birthday.year.to_s
-    @birth_yy = @birth_yyyy.to_s[ 2..-1 ]
-    @birth_year = @birth_yyyy #alias/default
+    @yyyy = random_birthday.year.to_s
+    @yy = @birth_yyyy.to_s[ 2..-1 ]
+    @year = @yyyy #alias/default
   
     # Numerical Day
     @day = random_birthday.day.to_s
