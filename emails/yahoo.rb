@@ -10,7 +10,7 @@ end
 class YahooThrough < Yahoo
   def new_row
     @new_email = Email.new
-    @new_email.domain = 'gmail'
+    @new_email.domain = ''
         
     @generate = Generate.new #this is already done in that App superclass initialize method but i haven't been through this old code and structure in so long so just doing it again here for current simplicity.
     
@@ -23,6 +23,42 @@ class YahooThrough < Yahoo
     @new_email.password = @generate.password
     
     @new_email.date_of_birth = @generate.date_of_birth
+    
+    @new_email.save
+  end
+  
+  # copy the gmail alternate email data
+  # first/last name should only be copied over if their keyword arguments are true. Otherwise leave the fields blank
+  # remember, yahoo prefills the first/last name fields. And our yahoo creation code doesn't touch the first/last name fields if they are blank in the database.
+  def copied_row( id, first_name: false, last_name: false )
+    @new_email = Email.new
+    @new_email.domain = 'yahoo'
+    @new_email.through = 'gmail'
+    
+    gmail_email = Email.find id
+    return 'Alternate email isn\'t a gmail' if gmail_email.domain != 'gmail'
+    
+    #Default, common
+    #@new_email.gender = gmail_email.gender
+    
+    if first_name == true
+      @new_email.first_name = gmail_email.first_name
+    end
+    
+    if last_name == true
+      @new_email.last_name = gmail_email.last_name
+    end
+    
+    @new_email.date_of_birth = gmail_email.date_of_birth
+    
+    #@TODO how to do usernames
+    #@new_email.username = @generate.username
+    
+    # password can be random and different from gmail
+    @new_email.password = @generate.password
+    
+    # assign the alternate email id as you definitely know what it is
+    @new_email.alternate_email_id = id
     
     @new_email.save
   end
