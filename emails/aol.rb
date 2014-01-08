@@ -93,73 +93,169 @@ class AolReg < Aol
     ## registration form
     @browser.form.wait_until_present
     
-    ## create email [div]
-    @browser.text_field( id: 'firstName' ).set @current_email.first_name
-    @browser.text_field( id: 'lastName' ).set @current_email.last_name
+    ## first section of first/last name, username, and password/verification
+    create_email_section
     
-    if !@current_email.username.blank?
-      @browser.text_field( id: 'desiredSN' ).set @current_email.username
+    about_you_section
+    
+    recovery_section
+    
+    #captcha solving
+    verify_section
+    
+    submit_button.click
+    
+    finish_up_new_email
+    
+    # press ok button confirmation page
+    
+    # get sent to the forbidden page
+    
+    # move over to aol.com and then mail
+    # or move over to mail.aol.com
+    
+    # optional stuff like click okay to the intro popups and stuff
+    # optional stuff of going to inbox, clicking on intro message
+  end
+  
+  def create_email_section
+    first_name_field.set @current_email.first_name
+    last_name_field.set @current_email.last_name
+    
+    # different than normal
+    username_complex @current_email.username
+    
+    password_field.set @current_email.password
+    password_verification_field.set @current_email.password
+  end
+  
+  def about_you_section
+    birthday_month_selection( @current_email.birthday_specifics.month.capitalize )
+    birthday_day_field.set @current_email.birthday_specifics.day
+    birthday_year_field.set @current_email.birthday_specifics.year
+    
+    gender_selection( @current_email.gender.capitalize )
+    
+    zip_code_field.set @current_email.zip_code
+  end
+  
+  def recovery_section
+    security_question_selection( @current_email.secret_question_1 )
+    security_answer_field.set @current_email.secret_answer_1
+    
+    alternate_email_field.set @current_email.alternate_email.full
+  end
+  
+  def verify_section
+    ## captcha
+    if captcha_image.present?
+      #captcha_solving
+      captcha_response_field
+    end
+  end
+  
+  ##
+  
+  def username_complex( username )
+    if !username.blank?
+      username_field.set username
     else
       # username suggestions
       # for broader, just try /username/ or similar
-      
+    
       @browser.text_field( id: 'desiredSN' ).click
-      
+    
       # 3/4 chance to choose one of the first 3/5 usernames.
       if (1..3) === rand( 1..4 )
         random_number = rand( 0..2 )
       else
         random_number = rand( 3..4 )
       end      
-      
+    
       @browser.element( id: 'username-suggestions' ).li( index: random_number ).link.when_present.click
-      chosen_username = @browser.text_field( id: 'desiredSN' ).text
-      @current_email.username = chosen_username
+      # Get the chosen username and save to database
+      @current_email.username = username_field.text
       @current_email.save
     end
+  end
+  
+  #private
+  
+    def first_name_field
+      @browser.text_field( id: 'firstName' )
+    end
+  
+    def last_name_field
+      @browser.text_field( id: 'lastName' )
+    end
+  
+    def username_field
+      @browser.text_field( id: 'desiredSN' )
+    end
+  
+    def password_field
+      @browser.text_field( id: 'password' )
+    end
+  
+    def password_verification_field
+      @browser.text_field( id: 'verifyPassword' )
+    end
     
-    @browser.text_field( id: 'password' ).set @current_email.password
-    @browser.text_field( id: 'verifyPassword' ).set @current_email.password
+    def birthday_month_selection( month )
+      birth_month_element = @browser.element( id: 'dobMonthSelectBoxIt' )
+      birth_month_element.click
+      @browser.element( id: 'dobMonthSelectBoxItOptions' ).li( text: month ).when_present.click
+    end
     
+    def birthday_day_field
+      @browser.text_field( id: 'dobDay' )
+    end
     
-    ## about you [div]    
-    @browser.element( id: 'dobMonthSelectBoxIt' ).click
-    @browser.element( id: 'dobMonthSelectBoxItOptions' ).li( text: @current_email.birthday_specifics.month.capitalize ).when_present.click
+    def birthday_year_field
+      @browser.text_field( id: 'dobYear' )
+    end
+  
+    def gender_selection( gender )
+      gender_element = @browser.element( id: 'genderSelectBoxIt' )
+      gender_element.click
+      @browser.element( id: 'genderSelectBoxItOptions' ).li( text: gender ).when_present.click
+    end
     
-    @browser.text_field( id: 'dobDay' ).set @current_email.birthday_specifics.day
-    @browser.text_field( id: 'dobYear' ).set @current_email.birthday_specifics.birth_yyyy
+    def zip_code_field
+      @browser.text_field( id: 'zipCode' )
+    end
     
-    @browser.element( id: 'genderSelectBoxIt' ).click
-    @browser.element( id: 'genderSelectBoxItOptions' ).li( text: @current_email.gender.capitalize ).when_present.click
+    def security_question_selection( question )
+      security_question_element = @browser.element( id: 'acctSecurityQuestionSelectBoxItContainer' )
+      security_question_element.click
+      @browser.element( id: 'acctSecurityQuestionSelectBoxItOptions' ).link( text: question ).when_present.click
+    end
     
-    @browser.text_field( id: 'zipCode' ).set @current_email.zip_code
+    def security_answer_field
+      @browser.text_field( id: 'acctSecurityAnswer' )
+    end
     
-    #def security_question_box
-    @browser.element( id: 'acctSecurityQuestionSelectBoxItContainer' ).click
-    @browser.element( id: 'acctSecurityQuestionSelectBoxItOptions' ).link( text: @current_email.secret_question_1 ).when_present.click
-    @browser.text_field( id: 'acctSecurityAnswer' ).set @current_email.secret_answer_1
+    def alternate_email_field
+      @browser.text_field( :id, 'altEMail' )
+    end
     
-    #@browser.text_field( id: 'mobileNum' ).set @generate.mobile_number
-    alternate_email_field( :id, 'altEMail' )
+    def captcha_image
+      @browser.image( id: 'regImageCaptcha' )
+    end
     
+    def captcha_solving
+      @captcha_answer = solve_captcha_image( 'src', 'regImageCaptcha' )
+    end
     
-    ## verify [div]
-    
-    ## captcha
-    #@browser.image( id: 'regImageCaptcha' ).wait_until_present
-    #captcha_answer = solve_captcha_image( 'id', 'regImageCaptcha' )
-    #@browser.text_field( :name => 'wordVerify' ).set( captcha_answer )
-    if @browser.image( id: 'regImageCaptcha' ).present?
-      @browser.text_field( name: 'wordVerify' ).hover
-      Watir::Wait.until { text_file_touched }
+    def captcha_response_field
+      @browser.text_field( name: 'wordVerify' ).click
+      Watir::Wait.until( 60 ) { text_file_touched? }
       remove_touched_file
     end
     
-    ## submit
-    @browser.button( type: 'submit', value: 'Sign Up' ).click
-    
-    finish_up_new_email
-  end
+    def submit_button
+      @browser.button( type: 'submit', value: 'Sign Up' )
+    end
   
   def confirm_alternate_email
     @browser.text_field( id: 'password' ).set #@generate.password
