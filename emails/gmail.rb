@@ -87,7 +87,7 @@ class GmailReg < Gmail
     @browser.form.wait_until_present
     
     ## first section of first/last name, username, and password/verification
-    create_email_div_section
+    create_email_section
     
     # if username inputted is already taken then an error message will present itself when moving away from said field
     # 
@@ -100,7 +100,7 @@ class GmailReg < Gmail
       @current_email.save
     end
     
-    about_you_div_section
+    about_you_section
     
     recovery_section
     
@@ -111,13 +111,13 @@ class GmailReg < Gmail
     end
     
     #captcha solving
-    verify_div_section
+    verify_section
     
     terms_of_service_checkbox.set    
     submit
   end
   
-  def create_email_div_section
+  def create_email_section
     first_name_field.set @current_email.first_name
     last_name_field.set @current_email.last_name
     
@@ -127,7 +127,7 @@ class GmailReg < Gmail
     password_verification_field.set @current_email.password
   end
   
-  def about_you_div_section
+  def about_you_section
     birthday_month_selection( @current_email.birthday_specifics.month.capitalize )
     birthday_day_field.set @current_email.birthday_specifics.day
     birthday_year_field.set @current_email.birthday_specifics.year
@@ -139,7 +139,7 @@ class GmailReg < Gmail
     alternate_email_field.set @current_email.alternate_email.full
   end
   
-  def verify_div_section
+  def verify_section
     ## captcha
     captcha_image
     #captcha_solving
