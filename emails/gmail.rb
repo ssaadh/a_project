@@ -86,13 +86,31 @@ class GmailReg < Gmail
     # registration form
     @browser.form.wait_until_present
     
-    ## main automation part
+    ## first section of first/last name, username, and password/verification
     create_email_div_section
-
+    
+    # if username inputted is already taken then an error message will present itself when moving away from said field
+    # 
+    if !username_available?
+      Watir::Wait.until( 60 ) { text_file_touched? }
+      remove_touched_file
+      
+      #<div class="username-suggestions" id="username-suggestions" style="display: block;">Available: <a href="">jennifercook604</a><a href="">cookjennifer01</a><a href="">cookj091</a></div>
+      @current_email.username = username_field.text
+      @current_email.save
+    end
+    
     about_you_div_section
     
     recovery_section
     
+    if !location_is_united_states?
+      adjust_mobile_phone_country
+      #mobile_phone_number_field.set '' # remove any numbers that may be preset like different country code
+      adjust_location
+    end
+    
+    #captcha solving
     verify_div_section
     
     terms_of_service_checkbox.set    
@@ -128,7 +146,73 @@ class GmailReg < Gmail
     captcha_response_field
   end
   
-  private
+  ##
+  
+  def adjust_mobile_phone_country
+    mobile_phone_country_dropdown.click
+    if half_and_half
+      mobile_phone_country_dropdown_option( 'United States' ).click
+    else
+      mobile_phone_country_dropdown_option( 'United States' ).parent.click
+    end
+  end
+  
+    # mobile phone section
+    def mobile_phone_country_dropdown
+      @browser.table( class: 'i18n_phone_number_input' ).th.div
+    end
+  
+    # United States
+    def mobile_phone_country_dropdown_option( country_name )
+      # possible to also select .parent (up to two times)
+      # is there a sibling option?
+      @browser.div( class: /i18n-phone-select-country-menu/ ).when_present.span( text: country_name ).when_present
+    end
+    
+    def mobile_phone_number_field
+      @browser.text_field( id: 'RecoveryPhoneNumber' )
+    end
+  
+  ##
+  
+  def location_is_united_states?
+    if location_dropdown.text == 'United States'
+      return true
+    else
+      return false
+    end
+  end
+  
+  def adjust_location
+    location_dropdown.click
+    location_dropdown_option( 'United States' ).click
+  end
+  
+    def location_dropdown
+      @browser.element( id: 'CountryCode' ).element( class: /caption/ )
+    end
+    
+    def location_dropdown_option( country_name )
+      @browser.element( id: 'CountryCode' ).element( class: /goog-menu goog-menu-vertical/ ).when_present.div( text: country_name ).when_present
+    end
+  
+  ##
+  
+  def username_not_available_notice_html
+    #<span role="alert" id="errormsg_0_GmailAddress">Someone already has that username. Try another?</span>
+    #id="errormsg_0_GmailAddress"
+    @browser.span( class: 'errormsg', text: 'Someone already has that username. Try another?')
+  end
+  
+  def username_available?
+    if username_not_available_notice_html.present? == true
+      return false
+    else    
+      return true
+    end
+  end
+  
+  #private
   
     def first_name_field
       @browser.text_field( id: 'FirstName' )
