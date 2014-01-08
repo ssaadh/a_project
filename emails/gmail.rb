@@ -115,6 +115,8 @@ class GmailReg < Gmail
     
     terms_of_service_checkbox.set    
     submit
+    
+    finish_up_new_email
   end
   
   def create_email_section
