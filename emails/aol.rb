@@ -46,27 +46,19 @@ class AolGeneration < Aol
 end
 
 class AolReg < Aol
-  def go_to
+  def go_to_first_url
     probability = rand( 1..5 )
     puts "goto #{probability}"
     case probability
       when 1..3 then
         # aol.com -> "sign up" link
-        begin
-          @browser.goto one_of_urls( 'aol.com' )
-        rescue Net::ReadTimeout => error
-          puts "hey this messed up: Exception #{error.class} : #{error}"
-        end
+        go_to( one_of_urls( 'aol.com' ) )
         @browser.link( text: 'Sign Up' ).click
         #@browser.link( text: 'Sign Up', href: /new.aol.com/ ).click
     
       when 4 then
         # direct url
-        begin
-          @browser.goto one_of_urls( 'new.aol.com', www: false )
-        rescue Net::ReadTimeout, Timeout::Error => error
-          puts "hey this goto messed up: Exception #{error.class} : #{error}. And the message: #{error.message}"
-        end
+        go_to( one_of_urls( 'new.aol.com', www: false ) )
     
       when 5 then
         # in-direct urls
@@ -76,11 +68,7 @@ class AolReg < Aol
         #urls << 'myaccount.aol.com'
         #urls << 'my.screenname.aol.com'
         
-        begin
-          @browser.goto urls.sample
-        rescue Net::ReadTimeout => error
-          puts "hey this messed up: Exception #{error.class} : #{error}"
-        end
+        go_to( urls.sample )
         
         @browser.link( id: 'getSn' ).click
     end #case
@@ -97,7 +85,7 @@ class AolReg < Aol
     self.current_email = id
     return 'Wrong email provider' if !check_domain?
     
-    go_to
+    go_to_first_url
     #@browser.text.include? 'Account'
     
     ## registration form

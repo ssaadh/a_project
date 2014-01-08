@@ -3,7 +3,7 @@ class YahooThrough1Reg < Yahoo
     @current_email = Email.find id
     return 'Wrong email provider' if !check_domain?
     
-    go_to
+    go_to_first_url
     
     step_2
     puts '2'
@@ -25,7 +25,7 @@ class YahooThrough1Reg < Yahoo
     finish_up_new_email
   end
     
-  def go_to
+  def go_to_first_url
     probability = rand( 1..4 )
     puts "goto #{probability}"
     case probability

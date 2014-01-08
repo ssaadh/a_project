@@ -30,7 +30,7 @@ end
 
 
 class GmailReg < Gmail
-  def go_to    
+  def go_to_first_url 
     probability = rand( 1..7 )
     puts "goto #{probability}"
     case probability
@@ -81,7 +81,7 @@ class GmailReg < Gmail
     self.current_email = id
     return 'Wrong email provider' if !check_domain?
     
-    go_to
+    go_to_first_url
     
     # registration form
     @browser.form.wait_until_present

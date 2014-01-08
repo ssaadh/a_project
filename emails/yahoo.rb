@@ -73,7 +73,7 @@ class YahooThrough2Reg < Yahoo
     return 'Wrong email provider' if !check_domain?
     
     # step 1
-    go_to
+    go_to_first_url
     
     # step 2
     @browser.goto google_sign_in_link
@@ -112,7 +112,7 @@ class YahooThrough2Reg < Yahoo
     finish_up_new_email
   end
     
-  def go_to
+  def go_to_first_url
     probability = rand( 1..9 )
     puts "goto #{probability}"
     case probability

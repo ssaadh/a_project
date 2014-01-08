@@ -36,6 +36,14 @@ class App
     def imacros=( k )
       @imacros ||= Imacros.new( @browser )
     end
+    
+  def go_to( url )
+    begin
+      @browser.goto url
+    rescue Net::ReadTimeout, Timeout::Error => error
+      puts "hey this goto messed up: Exception #{error.class} : #{error}. And the message: #{error.message}"
+    end
+  end
   
   ##
   
