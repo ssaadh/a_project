@@ -166,7 +166,7 @@ class GmailReg < Gmail
     def mobile_phone_country_dropdown_option( country_name )
       # possible to also select .parent (up to two times)
       # is there a sibling option?
-      @browser.div( class: /i18n-phone-select-country-menu/ ).when_present.span( text: country_name ).when_present
+      @browser.div( class: 'goog-menu goog-menu-vertical i18n-phone-select-country-menu' ).when_present.span( text: country_name )
     end
     
     def mobile_phone_number_field
@@ -193,7 +193,7 @@ class GmailReg < Gmail
     end
     
     def location_dropdown_option( country_name )
-      @browser.element( id: 'CountryCode' ).element( class: /goog-menu goog-menu-vertical/ ).when_present.div( text: country_name ).when_present
+      @browser.element( id: 'CountryCode' ).element( class: /goog-menu goog-menu-vertical/ ).when_present.div( text: country_name )
     end
   
   ##
@@ -259,7 +259,7 @@ class GmailReg < Gmail
     end
     
     def captcha_image
-      @browser.image( src: /google\.com\/recaptcha/ ).wait_until_present
+      @browser.image( src: /google\.com\/recaptcha/ )
     end
     
     def captcha_solving
