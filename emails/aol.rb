@@ -51,27 +51,37 @@ class AolReg < Aol
     puts "goto #{probability}"
     case probability
       when 1..3 then
-        ## 1.
-        # aol.com -> "sign up" link    
-        @browser.goto one_of_urls( 'aol.com' )
+        # aol.com -> "sign up" link
+        begin
+          @browser.goto one_of_urls( 'aol.com' )
+        rescue Net::ReadTimeout => error
+          puts "hey this messed up: Exception #{error.class} : #{error}"
+        end
         @browser.link( text: 'Sign Up' ).click
         #@browser.link( text: 'Sign Up', href: /new.aol.com/ ).click
     
       when 4 then
-        ## 2.
         # direct url
-        @browser.goto one_of_urls( 'new.aol.com', www: false )
+        begin
+          @browser.goto one_of_urls( 'new.aol.com', www: false )
+        rescue Net::ReadTimeout, Timeout::Error => error
+          puts "hey this goto messed up: Exception #{error.class} : #{error}. And the message: #{error.message}"
+        end
     
       when 5 then
-        ## 3.
         # in-direct urls
         urls = Array.new
         # webmail.aol.com (goes to my.screenname.aol.com), myaccount.aol.com (goes to my.screenname.aol.com), my.screenname.aol.com
         urls << 'webmail.aol.com'
         #urls << 'myaccount.aol.com'
         #urls << 'my.screenname.aol.com'
-        @browser.goto urls.sample
-        #@browser.link( text: 'Get a Free Username' ).click
+        
+        begin
+          @browser.goto urls.sample
+        rescue Net::ReadTimeout => error
+          puts "hey this messed up: Exception #{error.class} : #{error}"
+        end
+        
         @browser.link( id: 'getSn' ).click
     end #case
     
