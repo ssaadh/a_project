@@ -114,6 +114,7 @@ class GmailReg < Gmail
     verify_section
     
     terms_of_service_checkbox.set    
+    take_screenshot
     submit
     
     finish_up_new_email

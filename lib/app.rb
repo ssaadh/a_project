@@ -45,6 +45,17 @@ class App
     end
   end
   
+  def take_screenshot( location = nil, name = nil )
+    if location.nil?
+      location = "#{ File.dirname( __FILE__ ) }/../debugging/screenshots/#{@provider}"
+    end
+    
+    if name.nil?
+      name = "id-#{@current_email.id}-#{Time.now.strftime( "%Y-%m-%d_%H-%M" )}" 
+    end
+    @browser.screenshot.save "#{location}/#{name}.png"
+  end
+  
   ##
   
   def recaptcha_captcha( automation = '' )

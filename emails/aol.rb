@@ -101,6 +101,7 @@ class AolReg < Aol
     #captcha solving
     verify_section
     
+    take_screenshot
     submit_button.click
     
     finish_up_new_email
