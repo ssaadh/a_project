@@ -1,5 +1,5 @@
 class DateOfBirthSpecifics
-  attr_reader :birth_yyyy, :birth_yy, :birth_year, :month, :mont_abbr, :month_number, :month_filled, :day, :day_filled
+  attr_reader :yyyy, :yy, :year, :month, :mont_abbr, :month_number, :month_filled, :day, :day_filled
   
   def initialize( random_birthday )
     # Year
