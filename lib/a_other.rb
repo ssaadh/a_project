@@ -1,5 +1,9 @@
 require_relative 'rails-blank'
 
+##
+## Text file and checking
+##
+
 def text_file_touch?
   # Check for file existing every three seconds. Doing sleep stops the thread/script which is a problem?
   now = Time.now
@@ -26,6 +30,8 @@ def remove_touched_file
 end
 
 ##
+## Picking random line from text file
+##
 
 # from http://stackoverflow.com/questions/11007111/ruby-whats-an-elegant-way-to-pick-a-random-line-from-a-text-file/11007320#11007320
 def pick_random_line( the_file )
@@ -40,6 +46,8 @@ def pick_random_line_in_memory( the_file )
   File.readlines( the_file ).sample
 end
 
+##
+## Probabilities - url choosing
 ##
 
 def one_of_urls( url, www: true, slash: true )
@@ -75,6 +83,9 @@ def one_of_urls( url, www: true, slash: true )
   return urls.sample
 end
 
+##
+## Probabilities - quick, dirty shortcuts
+##
 
 def half_or_half
   if 1 == rand( 1..2 )
@@ -88,5 +99,32 @@ def half_and_half
   half_or_half
 end
 
-#def random_shifting( number )
-#end
+def one_third
+  if 1 == rand( 1..3 )
+    return true
+  else
+    return false
+  end
+end
+
+def one_fourth
+  if 1 == rand( 1..4 )
+    return true
+  else
+    return false
+  end
+end
+
+##
+## Randomness
+##
+
+def small_random_sleep
+  number = rand( 1..2 )
+  sleep number
+end
+
+def medium_random_sleep
+  number = rand( 3..5 )
+  sleep number
+end
