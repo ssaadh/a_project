@@ -1,3 +1,5 @@
+require_relative 'a_other'
+
 class DateOfBirthSpecifics
   attr_reader :yyyy, :yy, :year, :month, :mont_abbr, :month_number, :month_filled, :day, :day_filled
   

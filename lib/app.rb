@@ -51,7 +51,7 @@ class App
     end
     
     if name.nil?
-      name = "id-#{@current_email.id}-#{Time.now.strftime( "%Y-%m-%d_%H-%M" )}" 
+      name = "id-#{@current_email.id}-#{Time.now.strftime( "%Y-%m-%d_%H-%M" )}"
     end
     @browser.screenshot.save "#{location}/#{name}.png"
   end

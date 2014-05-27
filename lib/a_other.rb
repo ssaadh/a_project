@@ -119,12 +119,12 @@ end
 ## Randomness
 ##
 
-def small_random_sleep
-  number = rand( 1..2 )
+def small_random_sleep( range = 1..2 )
+  number = rand( range )
   sleep number
 end
 
-def medium_random_sleep
-  number = rand( 3..5 )
+def medium_random_sleep( range = 3..5 )
+  number = rand( range )
   sleep number
 end
