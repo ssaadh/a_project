@@ -1,4 +1,3 @@
-require_relative '../lib/app'
 require_relative 'emails'
 
 class Aol < Emails
@@ -100,6 +99,9 @@ class AolReg < Aol
     
     #captcha solving
     verify_section
+    
+    Watir::Wait.until( 60 ) { text_file_touched? }
+    remove_touched_file
     
     take_screenshot
     submit_button.click

@@ -1,4 +1,3 @@
-require_relative '../lib/app'
 require_relative 'emails'
 
 class Yahoo < Emails
@@ -96,6 +95,9 @@ class YahooThrough2Reg < Yahoo
     # step 5
     sign_up_fields_first_half
     sign_up_fields_second_half
+    
+    Watir::Wait.until( 60 ) { text_file_touched? }
+    remove_touched_file
     
     take_screenshot
     continue_button.click

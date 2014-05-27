@@ -1,4 +1,3 @@
-require_relative '../lib/app'
 require_relative 'emails'
 
 class Gmail < Emails
@@ -20,7 +19,8 @@ class GmailGeneration < Gmail
     @new_email.first_name = @generate.first_name
     @new_email.last_name = @generate.last_name
     
-    @new_email.password = @generate.password
+    password = @generate.password.chars.first( 10 ).join.to_s
+    @new_email.password = password
     
     @new_email.date_of_birth = @generate.date_of_birth
     
@@ -113,7 +113,11 @@ class GmailReg < Gmail
     #captcha solving
     verify_section
     
-    terms_of_service_checkbox.set    
+    terms_of_service_checkbox.set
+    
+    Watir::Wait.until( 60 ) { text_file_touched? }
+    remove_touched_file
+        
     take_screenshot
     submit
     

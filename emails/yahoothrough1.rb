@@ -1,3 +1,5 @@
+require_relative 'emails'
+
 class YahooThrough1Reg < Yahoo
   def new_email( id )
     @current_email = Email.find id

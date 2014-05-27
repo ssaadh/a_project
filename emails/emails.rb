@@ -25,7 +25,7 @@ class Emails < App
     @current_email.creation_date = Time.now
     @current_email.created = true
     
-    @current_email.save
+    #@current_email.save
   end
 
   def check_domain?

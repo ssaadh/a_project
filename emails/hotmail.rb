@@ -1,6 +1,9 @@
-require_relative '../lib/app'
+require_relative 'emails'
 
 class Hotmail < Email
+  def provider
+    @provider = 'hotmail'
+  end
 end
 
 class HotmailReg < Hotmail
@@ -47,8 +50,11 @@ class HotmailReg < Hotmail
     captcha_answer = solve_captcha_image( 'id', 'captcha*' )
     main_form.text_field( :name => 'captchaAnswer' ).set( captcha_answer )
     
+    take_screenshot
     ## submit
     main_form.button( :type => 'submit' ).click
+    
+    finish_up_new_email
   end
   
   def new_email
